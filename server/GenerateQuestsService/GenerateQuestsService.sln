@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateQuestsService.Main", "GenerateQuestsService.Main\GenerateQuestsService.Main.csproj", "{79E4C76D-6CB5-4E1A-84AB-AF3432BBB4A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateQuestsService.DataContracts", "..\CommonDataContracts\GenerateQuestsService.DataContracts\GenerateQuestsService.DataContracts.csproj", "{F6DBDC66-FB1D-4225-AB97-7146C8F7EAC0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDatabase.QuestDatabase", "..\CommonDatabase.QuestDatabase\CommonDatabase.QuestDatabase\CommonDatabase.QuestDatabase.csproj", "{B507ACCF-B190-41C6-B652-861A7FFD371B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateQuestsService.Core", "GenerateQuestsService.Core\GenerateQuestsService.Core.csproj", "{E966A938-E62E-4A27-A02A-DBCA9D5798AC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthService.DataContracts", "..\CommonDataContracts\AuthService.DataContracts\AuthService.DataContracts.csproj", "{D1FB20EC-6F9B-4FDF-A8E6-90095333A6E7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{79E4C76D-6CB5-4E1A-84AB-AF3432BBB4A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79E4C76D-6CB5-4E1A-84AB-AF3432BBB4A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79E4C76D-6CB5-4E1A-84AB-AF3432BBB4A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79E4C76D-6CB5-4E1A-84AB-AF3432BBB4A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6DBDC66-FB1D-4225-AB97-7146C8F7EAC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6DBDC66-FB1D-4225-AB97-7146C8F7EAC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6DBDC66-FB1D-4225-AB97-7146C8F7EAC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6DBDC66-FB1D-4225-AB97-7146C8F7EAC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B507ACCF-B190-41C6-B652-861A7FFD371B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B507ACCF-B190-41C6-B652-861A7FFD371B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B507ACCF-B190-41C6-B652-861A7FFD371B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B507ACCF-B190-41C6-B652-861A7FFD371B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E966A938-E62E-4A27-A02A-DBCA9D5798AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E966A938-E62E-4A27-A02A-DBCA9D5798AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E966A938-E62E-4A27-A02A-DBCA9D5798AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E966A938-E62E-4A27-A02A-DBCA9D5798AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1FB20EC-6F9B-4FDF-A8E6-90095333A6E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1FB20EC-6F9B-4FDF-A8E6-90095333A6E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1FB20EC-6F9B-4FDF-A8E6-90095333A6E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1FB20EC-6F9B-4FDF-A8E6-90095333A6E7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5607FF3C-BB24-47A1-A104-50C6E3720964}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestCore", "QuestCore.csproj", "{50408220-9BEA-400C-B4B1-664660A9E940}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthService.DataContracts", "..\CommonDataContracts\AuthService.DataContracts\AuthService.DataContracts.csproj", "{2A449765-ECF6-459D-A7B0-71EBA814F0F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateQuestsService.DataContracts", "..\CommonDataContracts\GenerateQuestsService.DataContracts\GenerateQuestsService.DataContracts.csproj", "{E780D0AB-F59E-44B6-B5B5-7A5BC458E3CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50408220-9BEA-400C-B4B1-664660A9E940}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50408220-9BEA-400C-B4B1-664660A9E940}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50408220-9BEA-400C-B4B1-664660A9E940}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50408220-9BEA-400C-B4B1-664660A9E940}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A449765-ECF6-459D-A7B0-71EBA814F0F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A449765-ECF6-459D-A7B0-71EBA814F0F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A449765-ECF6-459D-A7B0-71EBA814F0F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A449765-ECF6-459D-A7B0-71EBA814F0F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E780D0AB-F59E-44B6-B5B5-7A5BC458E3CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E780D0AB-F59E-44B6-B5B5-7A5BC458E3CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E780D0AB-F59E-44B6-B5B5-7A5BC458E3CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E780D0AB-F59E-44B6-B5B5-7A5BC458E3CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13EFF209-F36F-4216-B4A1-4F5A187178AD}
+	EndGlobalSection
+EndGlobal
