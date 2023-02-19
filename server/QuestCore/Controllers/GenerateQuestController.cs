@@ -34,11 +34,11 @@ namespace QuestCore.Controllers
             return _generateQuestsApi.UpdateQuestAsync(contract);
         }
 
-        //[HttpGet("{id}")]
-        //public Task<CommonHttpResponse<QuestViewModel>> GetQuest([FromRoute]GetQuestContract contract)
-        //{
-        //    return _generateQuestsApi.GetQuestAsync(contract);
-        //}
+        [HttpGet("{id}")]
+        public Task<CommonHttpResponse<QuestViewModel>> GetQuest([FromRoute]GetQuestContract contract)
+        {
+           return _generateQuestsApi.GetQuestAsync(contract);
+        }
 
         [HttpPost]
         public Task<CommonHttpResponse<IList<ShortQuestViewModel>>> GetFilteredQuests(GetFilteredQuestsContract contract)
