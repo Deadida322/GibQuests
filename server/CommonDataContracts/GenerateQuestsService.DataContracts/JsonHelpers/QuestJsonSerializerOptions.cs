@@ -16,6 +16,7 @@ namespace GenerateQuestsService.DataContracts.JsonHelpers
             options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             //сравнение полей без учета регистра
             options.PropertyNameCaseInsensitive = true;
+            options.AllowTrailingCommas= true;
 
             return options;
         }

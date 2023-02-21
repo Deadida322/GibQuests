@@ -51,14 +51,19 @@ namespace ProcessQuestService.Core.BusinessLogic
                         return CommonHttpHelper.BuildErrorResponse<StartQuestViewModel>(
                         initialError: "Не удалось создать комнату прохождения");
                     }
-                    
+
                     //устанавливаем квест в кеш на время прохождения квеста
-                    await _cacheHelper.SetQuestAsync(questRes.Data);
+                    var quest = questRes.Data;
+                    await _cacheHelper.SetQuestAsync(quest);
                     
                     //регистрируем прохождение
                     if(contract.RequestUserId.HasValue)
                     {
-                        await _cacheHelper.RegisterProcessingAsync(roomKey, contract.RequestUserId.Value);
+                        await _cacheHelper.RegisterProcessingAsync(
+                                roomKey, 
+                                contract.RequestUserId.Value, 
+                                quest.Id.ToString()
+                            );
                     }
                     else
                     {
@@ -69,7 +74,7 @@ namespace ProcessQuestService.Core.BusinessLogic
                     var result = new StartQuestViewModel()
                     {
                         Room = roomKey,
-                        Quest = _mapper.Map<QuestProcessViewModel>(questRes.Data)
+                        Quest = _mapper.Map<QuestProcessViewModel>(quest)
                     };
 
                     return CommonHttpHelper.BuildSuccessResponse(result, HttpStatusCode.OK);

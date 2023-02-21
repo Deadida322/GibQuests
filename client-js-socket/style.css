@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+/* Убираем внутренние отступы */
+ul[class],
+ol[class] {
+  padding: 0;
+}
+
+/* Убираем внешние отступы */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+* {
+    font-family: 'Roboto', sans-serif;
+    font-size: 30px;
+}
+body {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(3,7,51,0.9052871148459384) 0%, rgba(19,19,194,0.5355392156862745) 47%, rgba(2,170,204,0.42629551820728295) 100%);
+}
+/* section button */
+
+button.button-actions {
+    border: 3px solid;
+    border-color:  rgb(74, 177, 174);
+    /* color: rgb(25, 125, 125); */
+    color: rgba(255, 255, 255, 0.841);
+    background-color: rgb(94, 92, 241);
+    border-radius: 4px;
+    margin: 5px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+button.button-actions:hover {
+    background-color:  rgb(74, 177, 174);
+    border-color: rgba(255, 255, 255, 0.841);
+}
+
+.main-container {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.main-container__actions {
+    display: flex;
+    flex-direction: row;
+}

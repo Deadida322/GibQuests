@@ -1,10 +1,12 @@
 ﻿using CommonInfrastructure.Extension;
 using GenerateQuestsService.DataContracts.DataContracts;
+using GenerateQuestsService.DataContracts.JsonHelpers;
 using GenerateQuestsService.DataContracts.Models.Stages;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using ProcessQuestDataContracts.Models.Stages;
 using ProcessQuestService.Core.HelperModels;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
@@ -14,11 +16,13 @@ namespace ProcessQuestService.Core.Helpers
     {
         private IDistributedCache _cache;
         private RedisSetting _redisSetting;
+        private QuestJsonSerializer _jsonSerializer;
         public ProcessQuestCacheHelper(IDistributedCache cache,
-            IOptions<RedisSetting> redisSetting)
+            IOptions<RedisSetting> redisSetting, QuestJsonSerializer jsonSerializer)
         {
             _cache = cache;
             _redisSetting = redisSetting.Value;
+            _jsonSerializer = jsonSerializer;
         }
 
         private ProcessModel GetProcessModel(string processString)
@@ -27,22 +31,29 @@ namespace ProcessQuestService.Core.Helpers
             {
                 return null;
             }
-            return JsonSerializer.Deserialize<ProcessModel>(processString);
+            return _jsonSerializer.Deserialize<ProcessModel>(processString);
         }
 
-        private QuestViewModel GetQuestViewModel(string questString)
+        private async Task<QuestViewModel> GetQuestViewModel(string questId)
         {
-            if (questString.IsNullOrEmpty())
+            if (questId.IsNullOrEmpty())
             {
                 return null;
             }
-            return JsonSerializer.Deserialize<QuestViewModel>(questString);
+            string questString = await _cache.GetStringAsync(questId);
+
+            if(questString.IsNullOrEmpty())
+            {
+                return null;
+            }
+            return _jsonSerializer.Deserialize<QuestViewModel>(questString);
         }
         public async Task RegisterProcessingAsync(string roomKey, int userId, string questId)
         {
             string processString =  await _cache.GetStringAsync(roomKey);
+            ProcessModel process;
             if(processString.IsNullOrEmpty()) {
-                var process = new ProcessModel()
+                process = new ProcessModel()
                 {
                     Key = roomKey,
                     QuestId = questId
@@ -51,10 +62,11 @@ namespace ProcessQuestService.Core.Helpers
             }
             else
             {
-                var process = GetProcessModel(processString);
+                process = GetProcessModel(processString);
                 process.UserProcessing.Add(userId, 0);
-                await _cache.SetStringAsync(roomKey, JsonSerializer.Serialize(process));
             }
+            await _cache.SetStringAsync(roomKey, _jsonSerializer.Serialize(process));
+
         }
         private async Task AddRoomAsync(string roomKey)
         {
@@ -103,8 +115,8 @@ namespace ProcessQuestService.Core.Helpers
             else
             {
                 //кешируем в зависимости от длительности квеста
-                await _cache.SetStringAsync(questId, 
-                    JsonSerializer.Serialize(quest),
+                await _cache.SetStringAsync(questId,
+                    _jsonSerializer.Serialize(quest),
                     new DistributedCacheEntryOptions()
                 {
                       AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
@@ -113,17 +125,32 @@ namespace ProcessQuestService.Core.Helpers
             }
         }
 
-        public async Task<QuestViewModel> GetQuestAsync(string room)
+        /// <summary>
+        /// Получение квеста по ключу комнаты
+        /// </summary>
+        /// <param name="room"></param>
+        /// <returns></returns>
+        public async Task<QuestViewModel> GetQuestAsync(string roomKey)
         {
-            string roomString = await _cache.GetStringAsync(room);
+            string roomString = await _cache.GetStringAsync(roomKey);
+            if(roomKey.IsNullOrEmpty())
+            {
+                return null;
+            }
             var process = GetProcessModel(roomString);
             return process == null ? null : 
-                GetQuestViewModel(await _cache.GetStringAsync(process.QuestId));
+                await GetQuestViewModel(process.QuestId);
         }
 
-        public async Task<StageProcess> GetNextStageAsync(string questId, Stage currentStage)
+        public async Task<Stage> GetNextStageAsync(string questId, Stage currentStage)
         {
-           var stage = GetQuestViewModel(questId)
+            var quest = await GetQuestViewModel(questId);
+            if (quest == null) return null;
+            if(currentStage.Order == quest.Stages.Count - 1)
+            {
+                return new FinalStage();
+            }
+            return quest.Stages.Where(el => el.Order == currentStage.Order + 1).FirstOrDefault();
         }
 
         public bool IsQuestReady(int id)

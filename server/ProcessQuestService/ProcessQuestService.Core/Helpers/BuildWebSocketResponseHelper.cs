@@ -1,4 +1,5 @@
-﻿using ProcessQuestService.Core.InteractionWebSocketModel;
+﻿using ProcessQuestDataContracts.Models.Stages;
+using ProcessQuestService.Core.InteractionWebSocketModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,16 @@ namespace ProcessQuestService.Core.Helpers
             {
                 Sucsess = false,
                 Error = error
+            };
+        }
+
+        public static WebSocketResponse BuildSucsessResponse(StageProcess stage)
+        {
+            return new WebSocketResponse
+            {
+                Sucsess = true,
+                Error = null,
+                Stage = stage
             };
         }
 

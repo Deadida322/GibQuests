@@ -6,6 +6,10 @@ using System.Text.Json;
 using ProcessQuestService.Core.BusinessLogic;
 using ProcessQuestService.Core.Helpers;
 using ProcessQuestService.Core.HelperModels;
+using GenerateQuestsService.DataContracts.Models.Stages;
+using ProcessQuestDataContracts;
+using ProcessQuestDataContracts.Models.Stages;
+using ProcessQuestDataContracts.JsonHelpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +32,7 @@ var redisSettings = builder.Configuration.GetSection(nameof(RedisSetting)).Get<R
 // добавление кэширования
 builder.Services.AddStackExchangeRedisCache(options => {
     options.Configuration = redisSettings.Host;
-    options.InstanceName = redisSettings.InstanceName;
+    //options.InstanceName = redisSettings.InstanceName;
 });
 
 
@@ -39,6 +43,7 @@ builder.Services.Configure<RedisSetting>(builder.Configuration.GetSection(nameof
 builder.Services.AddScoped<ConnectQuestLogic>();
 builder.Services.AddScoped<ProcessQuestLogic>();
 builder.Services.AddScoped<ProcessQuestCacheHelper>();
+builder.Services.AddScoped<QuestJsonSerializer>();
 
 //добавляем контроллеры и конфигурируем Json опции при десериализации моделей
 //добавляем собственный полиморфный десериализатор
@@ -47,27 +52,31 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.AllowInputFormatterExceptionMessages = true;
     options.JsonSerializerOptions.SetQuestJsonSerializerOptions();
+    options.JsonSerializerOptions.Converters.Add(new ProcessStageJsonConverterHelper<StageProcess>());
 });
 
 //добавляем Auto mapper
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<ProcessQuestMappingProfile>());
 
-
+//
+builder.Services.AddCors(x => x.AddDefaultPolicy(xx => { xx.AllowAnyOrigin(); xx.AllowAnyHeader(); }));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //настраиваем Refit
+var refitJsonSerializerOptions = new JsonSerializerOptions
+{
+    PropertyNameCaseInsensitive = true
+};
+refitJsonSerializerOptions.SetQuestJsonSerializerOptions();
 //ставим опцию сравнения без учета регистра
 // "Value" = "value"
 var refitSettings = new RefitSettings
 {
     ContentSerializer = new SystemTextJsonContentSerializer(
-        new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        }
+        refitJsonSerializerOptions
     )
 };
 
@@ -88,7 +97,9 @@ if (app.Environment.IsDevelopment() || 1 == 1)
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors();
+
+//app.UseHttpsRedirection();
 
 app.MapControllers();
 

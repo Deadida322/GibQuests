@@ -47,13 +47,14 @@ namespace ProcessQuestService.Main.Controllers
 
                 var process = await _processQuestLogic.ProcessAsync(buffer, result.Count, room);
 
-                var request = Encoding.UTF8.GetBytes(process);
-                await webSocket.SendAsync(new ArraySegment<byte>(serverMsg, 0, serverMsg.Length), result.MessageType, result.EndOfMessage, CancellationToken.None);
+                var response = _processQuestLogic.Serialize(process);
+
+                await webSocket.SendAsync(new ArraySegment<byte>(response, 0, response.Length), result.MessageType, result.EndOfMessage, CancellationToken.None);
 
                 result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
             }
-            clients.Remove(webSocket);
+            //clients.Remove(webSocket);
             await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
     }
