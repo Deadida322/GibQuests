@@ -1,0 +1,33 @@
+{
+    "data": {
+        "id": 5,
+        "title": "Квест первый",
+        "description": "Описание",
+        "img": "Картинка",
+        "stages": [
+            {
+                "type": 4,
+                "coords": {
+                    "latitude": 10.1,
+                    "longitude": 15.1231
+                },
+                "order": 1,
+                "title": "mapStage"
+            },
+            {
+                "type": 2,
+                "code": "cdddscdsdssss",
+                "order": 2,
+                "title": "string"
+            },
+            {
+                "type": 3,
+                "text": "csddcddscdcd",
+                "order": 3,
+                "title": "textStage"
+            }
+        ],
+        "userId": 5,
+        "userName": "3"
+    }
+}

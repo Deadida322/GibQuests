@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+    
+    postgresdb:
+        image: postgres:latest
+        ports:
+            - 5555:5432
+        restart: on-failure
+        volumes:
+            - ./postgres-data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_DB: QuestsSharp
+            PGDATA: "/var/lib/postgresql/data/pgdata"
+            
+    auth-service:
+        build:
+            context: ./
+            dockerfile: ./server/AuthService/Dockerfile
+        ports:
+            - 9004:80
+        restart: on-failure
+        depends_on:
+            - postgresdb
+
+    generate-quest-service:
+        build:
+            context: ./
+            dockerfile: ./server/GenerateQuestsService/Dockerfile
+        ports:
+            - 9005:80
+        restart: on-failure
+        depends_on:
+            - postgresdb          
+    
+    quest-core:
+        build:
+            context: ./
+            dockerfile: ./server/QuestCore/Dockerfile
+        ports:
+            - 9003:80
+        restart: on-failure
+        depends_on:
+            - postgresdb
+
+volumes:
+    postgresdb:

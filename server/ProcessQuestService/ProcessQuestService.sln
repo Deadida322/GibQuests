@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessQuestService.Main", "ProcessQuestService.Main\ProcessQuestService.Main.csproj", "{9CA4A983-6ED2-4B7C-BA57-F5B940737D34}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateQuestsService.DataContracts", "..\CommonDataContracts\GenerateQuestsService.DataContracts\GenerateQuestsService.DataContracts.csproj", "{7BF11F16-BEFB-4432-B6BD-F61C6D952094}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthService.DataContracts", "..\CommonDataContracts\AuthService.DataContracts\AuthService.DataContracts.csproj", "{6EDA9FB3-32E7-41B5-8EA3-99BAF3573641}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessQuestDataContracts", "..\CommonDataContracts\ProcessQuestDataContracts\ProcessQuestDataContracts.csproj", "{E00E03AB-3E01-4B20-BDDA-3ECBD720E362}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessQuestService.ProcessQuestDatabase", "ProcessQuestService.ProcessQuestDatabase\ProcessQuestService.ProcessQuestDatabase.csproj", "{0157D34C-29E1-4D8A-AD82-1CFE27AE444C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessQuestService.Core", "ProcessQuestService.Core\ProcessQuestService.Core.csproj", "{8CEB19C9-33E9-42A6-9329-E72529300455}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9CA4A983-6ED2-4B7C-BA57-F5B940737D34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CA4A983-6ED2-4B7C-BA57-F5B940737D34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CA4A983-6ED2-4B7C-BA57-F5B940737D34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CA4A983-6ED2-4B7C-BA57-F5B940737D34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BF11F16-BEFB-4432-B6BD-F61C6D952094}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BF11F16-BEFB-4432-B6BD-F61C6D952094}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BF11F16-BEFB-4432-B6BD-F61C6D952094}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BF11F16-BEFB-4432-B6BD-F61C6D952094}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EDA9FB3-32E7-41B5-8EA3-99BAF3573641}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EDA9FB3-32E7-41B5-8EA3-99BAF3573641}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EDA9FB3-32E7-41B5-8EA3-99BAF3573641}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EDA9FB3-32E7-41B5-8EA3-99BAF3573641}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E00E03AB-3E01-4B20-BDDA-3ECBD720E362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E00E03AB-3E01-4B20-BDDA-3ECBD720E362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E00E03AB-3E01-4B20-BDDA-3ECBD720E362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E00E03AB-3E01-4B20-BDDA-3ECBD720E362}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0157D34C-29E1-4D8A-AD82-1CFE27AE444C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0157D34C-29E1-4D8A-AD82-1CFE27AE444C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0157D34C-29E1-4D8A-AD82-1CFE27AE444C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0157D34C-29E1-4D8A-AD82-1CFE27AE444C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CEB19C9-33E9-42A6-9329-E72529300455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CEB19C9-33E9-42A6-9329-E72529300455}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CEB19C9-33E9-42A6-9329-E72529300455}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CEB19C9-33E9-42A6-9329-E72529300455}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {08D3698F-2E8E-4F1F-9B43-C841F0745707}
+	EndGlobalSection
+EndGlobal
