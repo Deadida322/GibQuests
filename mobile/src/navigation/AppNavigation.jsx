@@ -1,17 +1,18 @@
 import { NavigationContainer } from '@react-navigation/native';
+import { View, Image, TouchableNativeFeedback } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import AppHeaderIcon from '../components/AppHeaderIcon';
 import MainScreen from '../screens/MainScreen';
 import PostScreen from '../screens/PostScreen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { THEME } from '../theme';
 import BookMarkedScreen from '../screens/BookMarkedScreen'
 import { Ionicons } from '@expo/vector-icons';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerItemList } from '@react-navigation/drawer';
 import AboutScreen from '../screens/AboutScreen'
-import { Text } from 'react-native-paper';
+import { Text, Avatar } from 'react-native-paper';
 import CreateScreen from '../screens/CreateScreen'
 import AddText from '../screens/Edit/AddText';
 import AddVideo from "../screens/Edit/AddVideo"
@@ -21,8 +22,12 @@ import AddTestMain from '../screens/AddTest/AddTestMain';
 import AddSingleQuestion from '../screens/AddTest/AddSingleQuestion';
 import AddMutlipleQuestion from '../screens/AddTest/AddMultipleQuestion'
 import AddInsertQuestion from '../screens/AddTest/AddInsertQuestion'
-import AddOrderQuestion from  '../screens/AddTest/AddOrderQuestion'
-import { addAssetsToAlbumAsync } from 'expo-media-library';
+import AddOrderQuestion from '../screens/AddTest/AddOrderQuestion'
+import PreviewScreen from '../screens/GoQuest/PreviewScreen';
+import GoScreen from '../screens/GoQuest/GoScreen';
+import LoginScreen from '../screens/Auth/LoginScreen';
+import RegisterScreen from '../screens/Auth/RegisterScreen';
+import WatchScreen from '../screens/Watch';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -31,6 +36,8 @@ const Tab = createMaterialBottomTabNavigator()
 const Create = createNativeStackNavigator();
 const About = createNativeStackNavigator();
 const AddTest = createNativeStackNavigator();
+const InitialStack = createNativeStackNavigator();
+
 
 const stackConfig = {
     animation: "slide_from_left",
@@ -57,8 +64,8 @@ export const AddTestNavigator = ({ navigation, route }) => {
             options={
                 { title: "Создание Теста" }
             }
-            screenProps ={
-               { aaa: "aaa"}
+            screenProps={
+                { aaa: "aaa" }
             }
             name="AddTest"
             component={AddTestMain}
@@ -101,20 +108,13 @@ export const AddTestNavigator = ({ navigation, route }) => {
 export const PostNavigator = ({ navigation }) => {
     return <Stack.Navigator
         screenOptions={
-            {
-                ...stackConfig,
-                headerRight: () => (
-                    <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-                        <Item title="Take photo" iconName='camera' onPress={() => navigation.navigate('Create')}></Item>
-                    </HeaderButtons>
-                ),
-            }
+            stackConfig
         }
     >
         <Stack.Screen
             options={
                 {
-                    title: "Все квесты",
+                    title: "Мои квесты",
                     headerLeft: () => (
                         <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
                             <Item title="Take photo" iconName='ios-menu' onPress={() => navigation.toggleDrawer()}></Item>
@@ -122,11 +122,17 @@ export const PostNavigator = ({ navigation }) => {
                     ),
                 }
             }
-
             name="Main"
             component={MainScreen}
         />
-        <Stack.Screen name="Post" component={PostScreen} />
+        <Stack.Screen
+            options={
+                {
+                    title: "Отследить квест",
+                }
+            } 
+            name="WatchScreen" 
+            component={WatchScreen} />
     </Stack.Navigator>
 }
 
@@ -224,7 +230,7 @@ export const AboutNavigator = ({ navigation }) => <About.Navigator
     <About.Screen
         options={
             {
-                title: "Об нас",
+                title: "Поиск квестов",
                 backgroundColor: THEME.colors.primary,
                 headerLeft: () => (
                     <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
@@ -234,7 +240,28 @@ export const AboutNavigator = ({ navigation }) => <About.Navigator
             }
         }
         name="About"
-        component={AboutScreen} />
+        component={AboutScreen}
+    />
+    <About.Screen
+        options={
+            {
+                title: "Предпросмотр",
+                backgroundColor: THEME.colors.primary,
+            }
+        }
+        name="QuestPreview"
+        component={PreviewScreen}
+    />
+    <About.Screen
+        options={
+            {
+                title: "Прохождение",
+                backgroundColor: THEME.colors.primary,
+            }
+        }
+        name="GoQuest"
+        component={GoScreen}
+    />
 </About.Navigator>
 
 export const CreateNavigator = ({ navigation }) => <Create.Navigator
@@ -247,7 +274,7 @@ export const CreateNavigator = ({ navigation }) => <Create.Navigator
         options={
             {
                 backgroundColor: THEME.colors.primary,
-                title: "Создать",
+                title: "Профиль",
                 headerLeft: () => (
                     <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
                         <Item title="Take photo" iconName='ios-menu' onPress={() => navigation.toggleDrawer()}></Item>
@@ -259,43 +286,102 @@ export const CreateNavigator = ({ navigation }) => <Create.Navigator
         component={CreateScreen} />
 </Create.Navigator>
 
-export default AppNavigation = () => <NavigationContainer>
-    <Drawer.Navigator
-        drawerActiveTintColor="#8e8e8f" screenOptions={
-            {
-                headerShown: false,
-                drawerType: "slide",
-                drawerActiveTintColor: THEME.colors.primary,
-                drawerLabelStyle: {
-                    fontFamily: 'bold'
-                }
+export const DrawerNavigation = () => <Drawer.Navigator
+    drawerContent={(props) => {
+        return (
+            <SafeAreaView style={{ flex: 1 }}>
+                <View
+                    style={{
+                        height: 200,
+                        alignItems: "flex-start",
+                        marginLeft: 15,
+                        justifyContent: "center",
+                    }}
+                >
+                    <Image
+                        style={{ width: 150, resizeMode: 'contain' }} source={require("../../assets/logo.png")} />
+                </View>
+                <DrawerItemList {...props} />
+            </SafeAreaView>
+        );
+    }}
+    drawerActiveTintColor="#8e8e8f" screenOptions={
+        {
+            headerShown: false,
+            drawerType: "slide",
+            drawerActiveTintColor: THEME.colors.primary,
+            drawerLabelStyle: {
+                fontFamily: 'bold'
             }
         }
-    >
-        <Drawer.Screen
-            name="PostTabs"
+    }
+>
+    <Drawer.Screen
+        name="PostTabs"
+        options={
+            {
+                title: 'Мои квесты',
+            }
+        }
+        component={BottomNavigator} />
+    <Drawer.Screen
+        name="About"
+        options={
+            {
+                title: 'Найти квест',
+            }
+        }
+        component={AboutNavigator} />
+    <Drawer.Screen
+        name="Create"
+        options={
+            {
+                title: 'Профиль',
+            }
+        }
+        component={CreateNavigator} />
+</Drawer.Navigator>
+
+export const InitialNavigation = () => (
+    <InitialStack.Navigator
+        screenOptions={
+            {
+                ...stackConfig,
+                animation: "flip",
+                presentation: "card"
+            }
+        } >
+        <InitialStack.Screen
             options={
                 {
-                    title: 'Все квесты',
+                    headerShown: false,
                 }
             }
-            component={BottomNavigator} />
-        <Drawer.Screen
-            name="About"
+            name="LoginScreen"
+            component={LoginScreen}
+        />
+        <InitialStack.Screen
             options={
                 {
-                    title: 'Создать квест',
+                    headerShown: false,
                 }
             }
-            component={AboutNavigator} />
-        <Drawer.Screen
-            name="Create"
+            name="RegisterScreen"
+            component={RegisterScreen}
+        />
+        <InitialStack.Screen
             options={
                 {
-                    title: 'Мои квесты',
+                    headerShown: false,
                 }
             }
-            component={CreateNavigator} />
-    </Drawer.Navigator>
+            name="DrawerNavigation"
+            component={DrawerNavigation}
+        />
+    </InitialStack.Navigator>
+)
+
+export default AppNavigation = () => <NavigationContainer>
+    <InitialNavigation></InitialNavigation>
 </NavigationContainer>
 

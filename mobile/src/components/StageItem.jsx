@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Card, Button, Avatar } from "react-native-paper"
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {THEME} from "../theme"
+import { THEME } from "../theme"
 
 const getIcon = (type) => {
     switch (type) {
@@ -45,7 +45,7 @@ const getSubtitle = (stage) => {
 }
 
 
-const StageItem = ({ stage, onStageEdit, onStageDelete }) => {
+const StageItem = ({ stage, onStageEdit, onStageDelete, editable }) => {
 
     return stage ? (
         <Card style={styles.card}>
@@ -55,10 +55,12 @@ const StageItem = ({ stage, onStageEdit, onStageDelete }) => {
             <Card.Content>
 
             </Card.Content>
-            <Card.Actions>
-                <Button onPress={()=>onStageEdit()} mode="elevated"><MaterialCommunityIcons name="pencil" size={22} color={THEME.colors.primary} /></Button>
-                <Button onPress={()=>onStageDelete()} mode="elevated"  dark={true} buttonColor={THEME.colors.error}><MaterialCommunityIcons name="delete" size={22} /></Button>
-            </Card.Actions>
+            { editable ??
+                <Card.Actions>
+                    <Button onPress={() => onStageEdit()} mode="elevated"><MaterialCommunityIcons name="pencil" size={22} color={THEME.colors.primary} /></Button>
+                    <Button onPress={() => onStageDelete()} mode="elevated" dark={true} buttonColor={THEME.colors.error}><MaterialCommunityIcons name="delete" size={22} /></Button>
+                </Card.Actions>
+            }
         </Card>
     ) : "";
 }

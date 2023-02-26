@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     },
     questionContainer: {
         marginTop: 10,
-        marginBottom: 148
+        marginBottom: 160
     }
 })
 

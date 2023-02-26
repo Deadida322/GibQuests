@@ -27,14 +27,12 @@ const QuestItem = ({question, index, onQuestionEdit, onQuestionDelete}) => {
     return (
         <Card style={styles.card}>
             <Card.Title title={question.question} 
-                left={(prop) =><Avatar.Icon size={42} icon={getIcon(question.type)}></Avatar.Icon>} subtitle={index + " Вопрос"}
+                left={() =><Avatar.Icon size={42} icon={getIcon(question.type)}></Avatar.Icon>} subtitle={index + " Вопрос"}
             />
-            <Card.Content>
-                
-            </Card.Content>
+   
             <Card.Actions>
                 <Button onPress={onQuestionEdit} mode="elevated"><MaterialCommunityIcons name="pencil" size={22} color={THEME.colors.primary} /></Button>
-                <Button onPress={onQuestionDelete} mode="elevated" buttonColor={THEME.colors.error}><MaterialCommunityIcons  name="delete" size={22}  /></Button>
+                <Button onPress={onQuestionDelete} mode="elevated" buttonColor={THEME.colors.error}><MaterialCommunityIcons color="white"  name="delete" size={22}  /></Button>
             </Card.Actions>
         </Card>
     );

@@ -1,18 +1,32 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ImageBackground } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { TextInput, Button, Text, Banner, Portal, Dialog } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 import { THEME } from "../theme"
 import FABMenu from '../components/FABMenu';
 import StageItem from '../components/StageItem';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Formik } from 'formik';
 import { ScrollView } from 'react-native-gesture-handler';
+import * as ImagePicker from 'expo-image-picker';
+import ImageLoader from '../components/UI/ImageLoader';
+import { questReducer } from '../store/reducers/quest';
+import { setCurrentQuest } from '../store/actions/quest';
 
 const BookMarkedScreen = ({ route, navigation }) => {
-    const [showFAB, setShowFab] = useState(false);
+
     const [stages, setStages] = useState([]);
+    const [image, setImage] = useState("")
+    const [showFAB, setShowFab] = useState(false);
     const [currentDeletable, setCurrentDeletable] = useState(false)
+    const dispatch = useDispatch()
+    let currentQuest = useSelector((state) => (state.quest.currenEditableQuest))
+    useEffect(() => {
+        if (currentQuest) {
+            setStages(currentQuest.stages)
+        }
+        console.log(currentQuest)
+    })
 
     function openStage(type) {
         switch (type) {
@@ -61,62 +75,41 @@ const BookMarkedScreen = ({ route, navigation }) => {
 
     }
 
+    const clearAll = () => {
+        dispatch(setCurrentQuest({}))
+    }
+
 
     const onStageEdit = (stage, index) => {
+        const navigating = (path, index) => {
+            navigation.navigate(path, {
+                onReturn: (item) => {
+                    let newItems = [...stages]
+                    newItems.splice(index, 1, item)
+                    dispatch(setCurrentQuest({ ...currentQuest, stages: newItems }))
+                },
+                stage
+            })
+        }
         switch (stage.type) {
             case "text": {
-                navigation.navigate('AddText', {
-                    onReturn: (item) => {
-                        let newItems = [...stages]
-                        newItems.splice(index, 1, item)
-                        setStages([...newItems])
-                    },
-                    stage
-                })
+                navigating("AddText")
                 break
             }
             case "video": {
-                navigation.navigate('AddVideo', {
-                    onReturn: (item) => {
-                        let newItems = [...stages]
-                        newItems.splice(index, 1, item)
-                        setStages([...newItems])
-                    },
-                    stage
-                })
+                navigating("AddVideo")
                 break
             }
             case "qrcode": {
-                navigation.navigate('AddQR', {
-                    onReturn: (item) => {
-                        let newItems = [...stages]
-                        newItems.splice(index, 1, item)
-                        setStages([...newItems])
-                    },
-                    stage
-                })
+                navigating("AddQR")
                 break
             }
             case "map": {
-                navigation.navigate('AddMap', {
-                    onReturn: (item) => {
-                        let newItems = [...stages]
-                        newItems.splice(index, 1, item)
-                        setStages([...newItems])
-                    },
-                    stage
-                })
+                navigating("AddMap")
                 break
             }
             case "test": {
-                navigation.navigate('AddTest', {
-                    onReturn: (item) => {
-                        let newItems = [...stages]
-                        newItems.splice(index, 1, item)
-                        setStages([...newItems])
-                    },
-                    stage
-                })
+                navigating("AddTest")
                 break
             }
         }
@@ -125,20 +118,20 @@ const BookMarkedScreen = ({ route, navigation }) => {
     const onStageDelete = (index) => {
         let newItems = [...stages]
         newItems.splice(index, 1)
-        setStages([...newItems])
+        dispatch(setCurrentQuest({ ...currentQuest, stages: newItems }))
         setCurrentDeletable(false)
     }
 
     return (
         <>
             <Portal>
-                <Dialog style={{borderRadius:4}} visible={currentDeletable} onDismiss={()=>setCurrentDeletable(false)}>
+                <Dialog style={{ borderRadius: 4 }} visible={currentDeletable} onDismiss={() => setCurrentDeletable(false)}>
                     <Dialog.Title>Вы уверены?</Dialog.Title>
                     <Dialog.Content>
-                       {currentDeletable ? <>
+                        {currentDeletable ? <>
                             <Text variant="bodyMedium">Вы действительно хотите удалить этап: </Text>
                             <Text style={{ color: THEME.colors.primary }} variant='bodyLarge'>{currentDeletable.title}</Text>
-                        </>: ""}
+                        </> : ""}
                     </Dialog.Content>
                     <Dialog.Actions>
                         <Button onPress={() => setCurrentDeletable(false)}>Отмена</Button>
@@ -154,6 +147,8 @@ const BookMarkedScreen = ({ route, navigation }) => {
                     {({ handleChange, handleBlur, handleSubmit, values }) => (
                         <View style={styles.mainForm}>
                             <Text style={styles.title} variant="titleMedium">{values.title || 'Название квеста'}</Text>
+                            <ImageLoader img={image} onImageLoad={(e) => setImage(e)}></ImageLoader>
+
                             <TextInput
                                 label="Название"
                                 mode="outlined"
@@ -161,6 +156,7 @@ const BookMarkedScreen = ({ route, navigation }) => {
                                 onBlur={handleBlur('title')}
                                 value={values.title}
                             />
+
                             <TextInput
                                 label="Описание"
                                 mode="outlined"
@@ -171,12 +167,15 @@ const BookMarkedScreen = ({ route, navigation }) => {
                                 onBlur={handleBlur('description')}
                                 value={values.description}
                             />
-
+                            <View style={styles.buttonContainer}>
+                                <Button mode="contained-tonal" onPress={() => clearAll()}>Сбросить</Button>
+                                <Button mode="contained" style={{ marginLeft: 6 }}>Сохранить</Button>
+                            </View>
                             <Text style={styles.title} variant="titleMedium">Этапы</Text>
-                            {stages.map((item, index) => (
+                            {stages?.length ? stages.map((item, index) => (
                                 <StageItem stage={item} onStageDelete={() => setCurrentDeletable({ ...item, index })} onStageEdit={() => onStageEdit(item, index)}></StageItem>
-                            ))}
-                            {(stages.length < 2) ? <Banner
+                            )) : ""}
+                            {(stages?.length < 2 || !stages) ? <Banner
                                 visible={true}
                                 actions={[
                                     {
@@ -190,7 +189,6 @@ const BookMarkedScreen = ({ route, navigation }) => {
                             >
                                 Необходимо добавить хотя бы несколько этапов для вашего квеста
                             </Banner> : ""}
-                            <Button onPress={handleSubmit} title="Submit" />
                         </View>
                     )}
                 </Formik>
@@ -207,7 +205,8 @@ const BookMarkedScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     mainForm: {
         padding: 8,
-        paddingTop: 10
+        paddingTop: 10,
+        paddingBottom: 80
     },
     input: {
         marginTop: 10
@@ -223,6 +222,12 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
+    buttonContainer: {
+        flexDirection: "row",
+        justifyContent: 'flex-end',
+        marginTop: 6
+    }
+
 })
 
 export default BookMarkedScreen;
