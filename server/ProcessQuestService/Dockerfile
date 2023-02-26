@@ -11,16 +11,16 @@ COPY *.sln ./
 COPY ["server/CommonDataContracts/GenerateQuestsService.DataContracts/", "CommonDataContracts/GenerateQuestsService.DataContracts/"]
 COPY ["server/CommonDataContracts/AuthService.DataContracts/", "CommonDataContracts/AuthService.DataContracts/"]
 COPY ["server/CommonDataContracts/ProcessQuestDataContracts/", "CommonDataContracts/ProcessQuestDataContracts/"]
-COPY ["server/QuestCore", "QuestCore"]
+COPY ["server/ProcessQuestService/", "ProcessQuestService/"]
 COPY ["server/nuget.config", ""]
-RUN dotnet restore "QuestCore/QuestCore.csproj"
-WORKDIR "/src/QuestCore/"
-RUN dotnet build "QuestCore.csproj" -c Release -o /app/build
+RUN dotnet restore "ProcessQuestService/ProcessQuestService.Main/ProcessQuestService.Main.csproj"
+WORKDIR "/src/ProcessQuestService/ProcessQuestService.Main"
+RUN dotnet build "ProcessQuestService.Main.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "QuestCore.csproj" -c Release -o /app/publish
+RUN dotnet publish "ProcessQuestService.Main.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "QuestCore.dll"]
+ENTRYPOINT ["dotnet", "ProcessQuestService.Main.dll"]

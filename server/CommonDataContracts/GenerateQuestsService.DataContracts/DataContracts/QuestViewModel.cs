@@ -1,4 +1,5 @@
-﻿using GenerateQuestsService.DataContracts.Models.Stages;
+﻿using GenerateQuestsService.DataContracts.Models;
+using GenerateQuestsService.DataContracts.Models.Stages;
 
 namespace GenerateQuestsService.DataContracts.DataContracts
 {
@@ -11,6 +12,8 @@ namespace GenerateQuestsService.DataContracts.DataContracts
         public string Description { get; set; }
 
         public string Img { get; set; }
+
+        public QuestPolicy Policy { get; set; }
 
         public IList<Stage> Stages { get; set; }
 

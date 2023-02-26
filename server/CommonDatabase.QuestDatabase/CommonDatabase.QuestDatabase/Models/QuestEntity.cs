@@ -14,6 +14,8 @@ namespace CommonDatabase.QuestDatabase.Models
 
         public int StageCount { get ; set; }
 
+        public QuestPolicyEntity Policy { get; set; }
+
         public IList<StageEntity> Stages { get; set; }
     }
 }

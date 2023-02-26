@@ -10,7 +10,7 @@ namespace CommonDatabase.QuestDatabase.EntityConfigurations
         public override void Configure(EntityTypeBuilder<T> builder)
         {
             base.Configure(builder);
-            builder.ToTable("stage");
+            //builder.ToTable("stage");
             //.HasDiscriminator(b => b.StageType);
         }
     }

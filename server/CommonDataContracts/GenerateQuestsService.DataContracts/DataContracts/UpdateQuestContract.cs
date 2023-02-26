@@ -1,4 +1,5 @@
 ﻿using CommonInfrastructure.Http;
+using GenerateQuestsService.DataContracts.Models;
 using GenerateQuestsService.DataContracts.Models.Stages;
 using System.ComponentModel.DataAnnotations;
 

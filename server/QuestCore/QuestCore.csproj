@@ -34,6 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CommonDataContracts\AuthService.DataContracts\AuthService.DataContracts.csproj" />
     <ProjectReference Include="..\CommonDataContracts\GenerateQuestsService.DataContracts\GenerateQuestsService.DataContracts.csproj" />
+    <ProjectReference Include="..\CommonDataContracts\ProcessQuestDataContracts\ProcessQuestDataContracts.csproj" />
   </ItemGroup>
 
 </Project>

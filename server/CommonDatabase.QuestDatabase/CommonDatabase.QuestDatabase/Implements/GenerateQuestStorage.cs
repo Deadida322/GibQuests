@@ -31,7 +31,9 @@ namespace CommonDatabase.QuestDatabase.Implements
         {
             var dbQuest = await _questContext.Quests.Where(q =>
                 q.IsDeleted == false &&
-                q.Id == contract.Id).Include(x => x.Stages)
+                q.Id == contract.Id &&
+                q.UserId == contract.RequestUserId)
+                .Include(x => x.Stages)
                     .FirstOrDefaultAsync();
 
             if(dbQuest == null)
@@ -48,7 +50,9 @@ namespace CommonDatabase.QuestDatabase.Implements
         {
             var result = await _questContext.Quests.Where(q =>
                 q.IsDeleted == false &&
-                q.Id == contract.Id).Include(x => x.Stages)
+                q.Id == contract.Id)
+                .Include(x => x.Stages)
+                .Include(x => x.Policy)
                     .FirstOrDefaultAsync();
 
             if(result == null)
@@ -84,6 +88,7 @@ namespace CommonDatabase.QuestDatabase.Implements
         {
             var quests = await _questContext.Quests
                 .Where(q => q.IsDeleted == false)
+                .Where(q => contract.IsFilterByUser ? q.UserId == contract.RequestUserId : true)
                 .ToListAsync();
 
             var result = new List<ShortQuestViewModel>();

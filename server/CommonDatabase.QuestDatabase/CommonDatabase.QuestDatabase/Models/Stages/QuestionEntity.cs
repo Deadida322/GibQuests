@@ -14,6 +14,8 @@ namespace CommonDatabase.QuestDatabase.Models.Stages
 
         public string Title { get; set; }
 
+        public int Order { get; set; }
+
         public string[] Answers { get; set; }
 
         public string[] RightAnswers { get; set; }
