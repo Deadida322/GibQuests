@@ -13,7 +13,7 @@ namespace GenerateQuestsService.DataContracts.JsonHelpers
             //десериализатор Stage
             options.Converters.Add(new StageJsonConverterHelper<Stage>());
             //десериализатор строковых энамов
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            //options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             //сравнение полей без учета регистра
             options.PropertyNameCaseInsensitive = true;
             options.AllowTrailingCommas= true;
