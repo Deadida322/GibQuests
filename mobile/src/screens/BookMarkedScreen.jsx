@@ -133,7 +133,7 @@ export default observer(function BookMarkedScreen({ navigation }) {
 
     const submitForm = (quest) => {
         if (store.currentQuest?.stages?.length > 1) {
-            let data = { ...store.currentQuest, ...quest, img: image, stages: [...store.currentQuest.stages].map((val, index) => ({ ...val, order: index })) }
+            let data = { ...store.currentQuest, ...quest, img: image, stages: [...store.currentQuest.stages].map((val, index) => ({ ...val, order: index })), policy: {policyType: "public", memberType: "group" } }
             let method = "POST"
             let url = "/GenerateQuest/CreateQuest"
             if (store.currentQuest.id) {

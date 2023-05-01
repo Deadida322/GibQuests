@@ -104,9 +104,9 @@ export const AddTestNavigator = ({ navigation, route }) => {
         ></AddTest.Screen>
     </AddTest.Navigator>)
 }
-export const AddNavigator = ({ navigation, showHeader = true,  }) => {
+export const AddNavigator = ({ navigation, showHeader = true, }) => {
     console.log(showHeader)
-    return (<Add.Navigator screenOptions={{...stackConfig, headerShown: showHeader}}>
+    return (<Add.Navigator screenOptions={{ ...stackConfig, headerShown: showHeader }}>
         <Add.Screen
             options={
                 {
@@ -172,13 +172,13 @@ export const PostNavigator = ({ navigation, route }) => {
         <Stack.Screen
             options={
                 {
-                    
+
                     title: "Обновить квест",
                 }
             }
             name="UpdateScreen"
-            screenProps ={{ itemId: 42 }}
-            children={()=><AddNavigator showHeader={false}></AddNavigator>} />
+            screenProps={{ itemId: 42 }}
+            children={() => <AddNavigator showHeader={false}></AddNavigator>} />
         <Stack.Screen
             options={
                 {
@@ -196,6 +196,16 @@ export const PostNavigator = ({ navigation, route }) => {
             }
             name="PreviewScreen"
             component={PreviewScreen}
+        />
+        <About.Screen
+            options={
+                {
+                    title: "Прохождение",
+                    backgroundColor: THEME.colors.primary,
+                }
+            }
+            name="GoQuest"
+            component={GoScreen}
         />
     </Stack.Navigator>
 }

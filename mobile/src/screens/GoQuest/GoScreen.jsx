@@ -1,12 +1,14 @@
 import { Button, Title, Paragraph, Text } from 'react-native-paper';
 import { Tabs, TabScreen, useTabIndex, useTabNavigation } from 'react-native-paper-tabs';
+import auth from "../../store/auth"
 import { View, StyleSheet, ScrollView, } from 'react-native';
 import GoMap from '../../components/GoQuest/GoMap';
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import GoText from "../../components/GoQuest/GoText"
 import GoVideo from '../../components/GoQuest/GoVideo';
 import GoQR from '../../components/GoQuest/GoQR';
 import GoTest from '../../components/GoQuest/GoTest/index';
+import request from "../../request"
 const getIcon = (type) => {
     switch (type) {
         case "text": {
@@ -54,6 +56,22 @@ export default function GoScreen({ navigation, route }) {
     const quest = route.params.quest
     const [index, setIndex] = useState(useTabIndex())
     const [availableStep, setAvailableStep] = useState(0)
+    const [socket, setSocket] = useState("")
+    const baseUrl = "wss://192.168.43.173:9007/api/room"
+    useEffect(()=>{
+        request({
+            url: `/ProcessQuest/ConnectToQuest`,
+            method: "POST",
+            headers: { 'Authorization': `Bearer ${auth.accessToken}` },
+            data: {
+                id: quest.id
+            }
+        }).then((res)=>{
+            console.log(res)
+        })
+        // const ws = new WebSocket('ws://host.com/path');
+        // setSocket(ws)
+    }, [])
     const onNextStage = (idx) => {
         setIndex(idx)
         setAvailableStep(idx)
