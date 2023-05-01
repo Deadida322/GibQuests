@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Card, Text, Menu, Button, IconButton } from "react-native-paper"
 import { THEME } from "../theme"
+import initialImage from '../../assets/initialImage';
 
-const QuestItem = ({ quest, onQuestPreview, isAdmin = false, onOpen, onWatch, shortInfo = false, onEdit }) => {
+const QuestItem = ({ quest, onQuestPreview, isAdmin = false, onDelete, onOpen, onWatch, shortInfo = false, onEdit, style }) => {
     const [showMenu, setShowMenu] = useState(false)
+    const [image, setImage] = useState(quest.img)
+    useEffect(()=>{
+        console.log(image)
+        if(image.indexOf("data:image/jpeg;base64") === -1){
+            setImage(initialImage)
+        }
+    }, [])
     return (
-        <Card style={styles.card}>
+        <Card style={{...styles.card, ...style}}>
             <View style={styles.img}>
-                <Card.Cover style={{ marginTop: -8 }} source={{ uri: quest.img }} />
+                <Card.Cover style={{ marginTop: -8 }} source={{ uri: image }} />
             </View>
 
-            <Card.Title title={quest.title} subtitle={`${quest.stages.length} этапов`} />
+            <Card.Title title={quest.title} subtitle={`${quest.stageCount} этапов`} />
             {!shortInfo ?
                 <Card.Content>
                     <Text>{quest.description}</Text>
@@ -38,7 +46,7 @@ const QuestItem = ({ quest, onQuestPreview, isAdmin = false, onOpen, onWatch, sh
                                     <Menu.Item leadingIcon="pencil-outline" onPress={() => { onEdit(); setShowMenu(false) }} title="Редактировать" />
                                     <Menu.Item leadingIcon="account-eye" onPress={() => { onWatch(); setShowMenu(false) }} title="Отследить" />
                                     <Menu.Item leadingIcon="share-outline" onPress={() => { }} title="Поделиться" />
-                                    <Menu.Item leadingIcon="delete-outline" onPress={() => { }} title="Удалить" />
+                                    <Menu.Item leadingIcon="delete-outline" onPress={() => { onDelete(); setShowMenu(false) }} title="Удалить" />
 
                                 </Menu>
                                 <Button icon="eye" mode="contained" onPress={onQuestPreview}>Посмотреть</Button>

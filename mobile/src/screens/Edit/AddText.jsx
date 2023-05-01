@@ -12,7 +12,7 @@ const validation = Yup.object().shape({
         .min(2, 'Слишком короткое название')
         .max(60, 'Слишком длинное название')
         .required('Поле обязательно'),
-    description: Yup.string()
+    text: Yup.string()
         .min(10, "Описание должно быть содержательным")
         .required('Поле обязательно')
 });
@@ -23,15 +23,17 @@ const validation = Yup.object().shape({
 const AddText = ({ navigation, route }) => {
     const initialForm = route?.params?.stage || {
         title: "",
-        description: "",
+        text: "",
         type: "text"
     }
     const submitHandler = (values)=>{
-        route.params.onReturn(
-            {
-                ...values,
-            }
-        );
+        console.log(values)
+        if(values){
+            route.params.onReturn(
+                values,
+            );
+        }
+       
         navigation.goBack()
     }
 
@@ -61,14 +63,14 @@ const AddText = ({ navigation, route }) => {
                             mode="outlined"
                             numberOfLines={4}
                             multiline={true}
-                            error={touched.description && errors.description ? errors.description : ""}
+                            error={touched.text && errors.text ? errors.text : ""}
                             style={styles.input}
-                            onChangeText={handleChange('description')}
-                            onBlur={handleBlur('description')}
-                            value={values.description}
+                            onChangeText={handleChange('text')}
+                            onBlur={handleBlur('text')}
+                            value={values.text}
                         />
                         <Text style={{ color: THEME.colors.error }} variant="labelSmall">
-                            <ErrorMessage name="description" />
+                            <ErrorMessage name="text" />
                         </Text>
                         <Button style={styles.button} onPress={handleSubmit} mode="contained-tonal" title="Submit" >Добавить</Button>
                         <Text style={styles.title} variant="titleMedium">Предпросмотр:</Text>

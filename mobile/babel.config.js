@@ -5,7 +5,7 @@ module.exports = function(api) {
     plugins: ['react-native-reanimated/plugin'],
     env: {
       production: {
-        plugins: ['react-native-paper/babel'],
+        plugins: [ ['@babel/plugin-proposal-decorators', { legacy: true }], 'react-native-paper/babel'],
       },
     },
   };

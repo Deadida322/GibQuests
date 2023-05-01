@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, ImageBackground } from 'react-native';
 import StageItem from '../../components/StageItem';
 import { LinearGradient } from "expo"
 import { Text, Card, IconButton, Button, Badge } from 'react-native-paper';
 import { THEME } from '../../theme';
+import request from '../../request';
 
 const PreviewScreen = ({ navigation, route }) => {
-    const quest = route.params.quest
+    const [quest, setQuest] = useState(route.params.quest)
+
+    useEffect(()=>{
+        request({
+            url: `/GenerateQuest/GetQuest/${quest.id}`,
+            method: "GET"
+        }).then(res=>{
+            console.log(res)
+            setQuest(res)
+        })
+    }, [])
     return (
         <ScrollView style={styles.main}>
             <View style={styles.imageWrapper}>
@@ -41,9 +52,9 @@ const PreviewScreen = ({ navigation, route }) => {
                     <Text variant='titleMedium' style={{ color: THEME.colors.secondary }}>
                         Этапы
                     </Text>
-                    <Badge style={styles.badge}>{quest.stages.length}</Badge>
+                    <Badge style={styles.badge}>{quest.stages?.length}</Badge>
                 </View>
-                {quest.stages.map(item => (<StageItem editable={false} stage={item}></StageItem>))}
+                {quest.stages?.map(item => (<StageItem editable={false} stage={item}></StageItem>))}
             </View>
         </ScrollView >
     );
@@ -80,7 +91,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     badgeContainer: {
-        position: "relative"
+        position: "relative",
+        marginBottom: 10
     },
     badge: {
         position: "absolute",

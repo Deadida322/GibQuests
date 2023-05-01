@@ -11,6 +11,7 @@ import {
 import { THEME } from '../theme'
 import { Formik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import auth from '../store/auth';
 const personalValidation = Yup.object().shape({
     name: Yup.string()
         .min(2, 'Слишком короткое имя')
@@ -18,8 +19,8 @@ const personalValidation = Yup.object().shape({
     surname: Yup.string()
         .required('Поле обязательно'),
 });
-const loginValidation = Yup.object().shape({
-    login: Yup.string()
+const userNameValidation = Yup.object().shape({
+    userName: Yup.string()
         .required('Поле обязательно'),
     password: Yup.string()
         .required('Поле обязательно'),
@@ -28,19 +29,20 @@ const loginValidation = Yup.object().shape({
 });
 
 const CreateScreen = ({ navigation }) => {
+    console.log(auth.user)
     const submitPersonal = (values) => {
         console.log(values)
     }
-    const submitLogin = (values) => {
+    const submituserName = (values) => {
         console.log(values)
     }
 
     const initialPersonal = {
-
+        ...auth.user,
     }
 
-    const initialLogin = {
-
+    const initialuserName = {
+        ...auth.user
     }
 
     return (
@@ -91,9 +93,9 @@ const CreateScreen = ({ navigation }) => {
                     <Card.Title titleVariant="titleMedium" titleStyle={styles.title} title="Данные для входа" />
                         <Card.Content>
                             <Formik
-                                initialValues={initialLogin}
-                                validationSchema={loginValidation}
-                                onSubmit={values => submitLogin(values)}
+                                initialValues={initialuserName}
+                                validationSchema={userNameValidation}
+                                onSubmit={values => submituserName(values)}
                             >
                                 {({ handleChange, handleBlur, handleSubmit, values, touched, errors }) => (
                                     <View>
@@ -102,10 +104,10 @@ const CreateScreen = ({ navigation }) => {
                                             label="Логин"
                                             placeholder={'Введите текст'}
                                             style={styles.input}
-                                            error={touched.login && errors.login ? errors.login : ""}
-                                            onChangeText={handleChange('login')}
-                                            onBlur={handleBlur('login')}
-                                            value={values.login}
+                                            error={touched.userName && errors.userName ? errors.userName : ""}
+                                            onChangeText={handleChange('userName')}
+                                            onBlur={handleBlur('userName')}
+                                            value={values.userName}
                                         />
                                         <TextInput
                                             mode="outlined"

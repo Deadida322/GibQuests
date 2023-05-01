@@ -3,33 +3,70 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { Card, Button, Text, TextInput } from "react-native-paper"
 import { Formik, ErrorMessage } from 'formik';
 import ImageLoader from '../../components/UI/ImageLoader';
+import ShowError from '../../components/UI/ShowError';
+import ShowSuccess from '../../components/UI/ShowSuccess'
 import * as Yup from 'yup';
 import { THEME } from '../../theme';
+import request from '../../request';
 
 const loginValidation = Yup.object().shape({
     login: Yup.string()
         .required('Поле обязательно'),
     password: Yup.string()
         .required('Поле обязательно'),
+    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Пароли должны совпадать')
 });
 
 const RegisterScreen = ({ navigation, route }) => {
 
     const [image, setImage] = useState("")
+    const [showError, setShowError] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState("")
+    const [success, setSuccess] = useState(false)
+
+    const initialValues = {
+        name: "",
+        surname: "",
+        login: "",
+        password: "",
+        confirmPassword: ""
+    }
 
     const submitLogin = (data) => {
-        console.log(data)
+        const info = {
+            ...data,
+            userName: data.login,
+            img: image
+        }
+        setIsLoading(true)
+        request({
+            url: '/Auth/Register',
+            method: 'POST',
+            data: info
+        }).then((res) => {
+            setIsLoading(false)
+            setSuccess(true)
+            // navigation.navigate("LoginScreen")
+        }).catch((err) => {
+            console.log(err)
+            setError(err.join(" "))
+            setShowError(true)
+            setIsLoading(false)
+        });
     }
 
     return (
         <ScrollView>
             <View style={styles.wrapper}>
+            <ShowError visible={showError} error={error} setVisible={setShowError}></ShowError>
+            <ShowSuccess visible={success} message={"Теперь вы можете выполнить вход в приложение"} setVisible={setSuccess}></ShowSuccess>
                 <Formik
-                    initialValues={{}}
+                    initialValues={initialValues}
                     validationSchema={loginValidation}
                     onSubmit={values => submitLogin(values)}
                 >
-                    {({ handleChange, handleBlur, handleSubmit, values, touched, errors }) => (
+                    {({ handleChange, handleBlur, handleSubmit, validateForm, values, touched, errors }) => (
                         <View style={{ width: "100%" }}>
                             <Card style={styles.card}>
                                 <Card.Title title="Новый аккаунт" />
@@ -74,7 +111,7 @@ const RegisterScreen = ({ navigation, route }) => {
                                         value={values.login}
                                     />
                                     <Text style={{ color: THEME.colors.error }} variant="labelSmall">
-                                        <ErrorMessage name="login" />
+                                        <ErrorMessage error={error} name="login" />
                                     </Text>
                                     <TextInput
                                         mode="outlined"
@@ -85,6 +122,7 @@ const RegisterScreen = ({ navigation, route }) => {
                                         error={touched.password && errors.password ? errors.password : ""}
                                         onBlur={handleBlur('password')}
                                         value={values.password}
+                                        secureTextEntry={true}
                                     />
                                     <Text style={{ color: THEME.colors.error }} variant="labelSmall">
                                         <ErrorMessage name="password" />
@@ -98,13 +136,14 @@ const RegisterScreen = ({ navigation, route }) => {
                                         error={touched.confirmPassword && errors.confirmPassword ? errors.confirmPassword : ""}
                                         onBlur={handleBlur('confirmPassword')}
                                         value={values.confirmPassword}
+                                        secureTextEntry={true}
                                     />
                                     <Text style={{ color: THEME.colors.error }} variant="labelSmall">
                                         <ErrorMessage name="confirmPassword" />
                                     </Text>
                                     <Card.Actions>
                                         <Button onPress={() => navigation.navigate("LoginScreen")} mode='contained-tonal' style={styles.btn}>Войти</Button>
-                                        <Button onPress={handleSubmit} mode='contained' style={styles.btn}>Регистрация</Button>
+                                        <Button disabled={isLoading} onPress={() => { validateForm(); handleSubmit() }} mode='contained' style={styles.btn}>Регистрация</Button>
                                     </Card.Actions>
                                 </Card.Content>
                             </Card>

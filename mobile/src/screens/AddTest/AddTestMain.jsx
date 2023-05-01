@@ -35,7 +35,7 @@ const AddTestMain = ({ route, navigation }) => {
             return
         }
         params.onReturn(
-            {...values, questions}
+            { ...values, questions }
         );
         navigation.goBack()
     }
@@ -114,7 +114,6 @@ const AddTestMain = ({ route, navigation }) => {
                     }
                 })
                 break;
-
             }
             case "insert": {
                 navigation.navigate('AddInsertQuestion', {
@@ -123,7 +122,6 @@ const AddTestMain = ({ route, navigation }) => {
                     }
                 })
                 break;
-
             }
             case "order": {
                 navigation.navigate('AddOrderQuestion', {
@@ -132,7 +130,6 @@ const AddTestMain = ({ route, navigation }) => {
                     }
                 })
                 break;
-
             }
         }
     }

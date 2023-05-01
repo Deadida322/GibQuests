@@ -15,6 +15,9 @@ const getIcon = (type) => {
         case "qrcode": {
             return 'qrcode'
         }
+        case "qrCode": {
+            return 'qrcode'
+        }
         case "map": {
             return 'map-outline'
         }
@@ -27,10 +30,13 @@ const getIcon = (type) => {
 const getSubtitle = (stage) => {
     switch (stage.type) {
         case "text": {
-            return stage.description
+            return stage.text
         }
         case "video": {
             return stage.url
+        }
+        case "qrCode": {
+            return stage.code
         }
         case "qrcode": {
             return stage.code
@@ -68,7 +74,6 @@ const StageItem = ({ stage, onStageEdit, onStageDelete, editable }) => {
 const styles = StyleSheet.create({
     card: {
         borderRadius: 2,
-        margin: 4,
         marginBottom: 10
     }
 })

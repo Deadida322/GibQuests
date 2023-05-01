@@ -1,11 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { StyleSheet, ActivityIndicator, View, ScrollView, Dimensions, BackHandler } from "react-native";
 import { THEME } from "../theme"
-import { FAB, Button, Text, Card, Searchbar } from "react-native-paper";
+import { FAB, Button, Text, Card, Searchbar, Portal, Dialog } from "react-native-paper";
 import QuestItem from "../components/QuestItem";
 import { setCurrentQuest } from "../store/actions/quest";
-
+import questStore from "../store/createQuest";
+import auth from "../store/auth"
+import { Observer, observer } from "mobx-react"
+import request from "../request";
 const completed = [{
     title: "Найди меня",
     description: "lorem ipsum dolor sit amet sab grou derumo matis, silico der toilo potoroto yomokato",
@@ -105,14 +108,46 @@ const completed = [{
     ]
 }]
 
-export default function MainScreen({ navigation, route }) {
-    const dispatch = useDispatch()
+
+export default observer(function MainScreen({ navigation, route }) {
+    const [createdQuests, setCreatedQuests] = useState([])
+    const [currentDeletable, setCurrentDeletable] = useState(false)
+    const fetchCreated = () =>{
+        console.log("fetch get")
+        let data = {}
+        if(auth.user.id){
+            data.id = auth.user.id
+        }
+        request({
+            url: "/GenerateQuest/GetFilteredQuests",
+            method: "POST",
+            headers: {'Authorization': `Bearer ${ auth.accessToken}`},
+            data: data
+        }).then(res=>{
+            setCreatedQuests(res)
+            console.log(res)
+        }).catch(err=>{
+            console.log(err, "err")
+        })
+    }
+    const onQuestDelete = (id) =>{
+        request({
+            url: `/GenerateQuest/DeleteQuest/${id}`,
+            method: "DELETE"
+        }).then(res=>{
+            setCurrentDeletable(false)
+            fetchCreated()
+        })
+    }
+    const onDelete = (item) => {
+        setCurrentDeletable(item)
+    }
     const onWatch = () => {
         navigation.navigate("WatchScreen")
     }
-    const onEdit = () => {
-        dispatch(setCurrentQuest(completed[0]))
-        navigation.navigate("Add")
+    const onEdit = (item) => {
+        questStore.setCurrentEditable(item)
+        navigation.navigate("UpdateScreen", { goToEdit: true})
     }
 
     const onBackPress = () => {
@@ -123,10 +158,14 @@ export default function MainScreen({ navigation, route }) {
             return false;
         }
     };
-    
+    const onQuestPreview = (item) =>{
+        navigation.navigate("PreviewScreen", { quest:item})
+    }
+
     useEffect(() => {
         navigation.addListener('focus', () => {
             BackHandler.addEventListener('hardwareBackPress', onBackPress)
+            fetchCreated()
         })
         navigation.addListener('blur', () => {
             BackHandler.removeEventListener('hardwareBackPress', onBackPress)
@@ -136,6 +175,21 @@ export default function MainScreen({ navigation, route }) {
 
     return (
         <ScrollView>
+            <Portal>
+                <Dialog style={{ borderRadius: 4 }} visible={currentDeletable} onDismiss={() => setCurrentDeletable(false)}>
+                    <Dialog.Title>Вы уверены?</Dialog.Title>
+                    <Dialog.Content>
+                        {currentDeletable ? <>
+                            <Text variant="bodyMedium">Вы действительно хотите удалить квест: </Text>
+                            <Text style={{ color: THEME.colors.primary }} variant='bodyLarge'>{currentDeletable.title}</Text>
+                        </> : ""}
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={() => setCurrentDeletable(false)}>Отмена</Button>
+                        <Button onPress={() => onQuestDelete(currentDeletable.id)}>Да</Button>
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
             <View style={styles.wrapper}>
                 <Text style={styles.title} variant="titleMedium">Создано вами</Text>
                 <Searchbar
@@ -145,11 +199,13 @@ export default function MainScreen({ navigation, route }) {
                 // value={searchQuery}
                 />
                 <ScrollView style={{ marginTop: 10 }} horizontal={true}>
-                    {[...completed, ...completed].map(item => (
+                    {createdQuests.map(item => (
                         <View style={{ width: Dimensions.get("screen").width - 48, margin: 3, marginBottom: 10, marginRight: 8 }}>
                             <QuestItem
+                                key={item.id}
                                 isAdmin={true}
-                                onEdit={()=>onEdit()}
+                                onDelete={() => onDelete(item)}
+                                onEdit={() => onEdit(item)}
                                 onQuestPreview={() => onQuestPreview(item)}
                                 onWatch={() => onWatch()}
                                 quest={item}
@@ -178,7 +234,7 @@ export default function MainScreen({ navigation, route }) {
             </View>
         </ScrollView>
     );
-}
+})
 
 const styles = StyleSheet.create({
     search: {

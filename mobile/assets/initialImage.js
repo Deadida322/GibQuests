@@ -1,0 +1,1 @@
+export default "https://img.freepik.com/free-vector/happy-people-air-balloon-flat-vector-illustration-man-woman-employees-looking-through-binoculars-searching-creative-vacancies-finding-work-job-hunting-research-concept_74855-24259.jpg?w=1380&t=st=1676117095~exp=1676117695~hmac=3d9bfb8f0bd99c96c9e641cf0cb62edf82a19953e2fc0e0712c692600be734a2"

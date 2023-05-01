@@ -104,40 +104,9 @@ export const AddTestNavigator = ({ navigation, route }) => {
         ></AddTest.Screen>
     </AddTest.Navigator>)
 }
-
-export const PostNavigator = ({ navigation }) => {
-    return <Stack.Navigator
-        screenOptions={
-            stackConfig
-        }
-    >
-        <Stack.Screen
-            options={
-                {
-                    title: "Мои квесты",
-                    headerLeft: () => (
-                        <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-                            <Item title="Take photo" iconName='ios-menu' onPress={() => navigation.toggleDrawer()}></Item>
-                        </HeaderButtons>
-                    ),
-                }
-            }
-            name="Main"
-            component={MainScreen}
-        />
-        <Stack.Screen
-            options={
-                {
-                    title: "Отследить квест",
-                }
-            } 
-            name="WatchScreen" 
-            component={WatchScreen} />
-    </Stack.Navigator>
-}
-
-export const AddNavigator = ({ navigation }) => {
-    return (<Add.Navigator screenOptions={stackConfig}>
+export const AddNavigator = ({ navigation, showHeader = true,  }) => {
+    console.log(showHeader)
+    return (<Add.Navigator screenOptions={{...stackConfig, headerShown: showHeader}}>
         <Add.Screen
             options={
                 {
@@ -173,7 +142,6 @@ export const AddNavigator = ({ navigation }) => {
             }
         } name="AddMap" component={AddMap} />
         <Add.Screen options={
-
             {
                 headerShown: false,
                 title: "Добавить тест",
@@ -181,13 +149,64 @@ export const AddNavigator = ({ navigation }) => {
         } name="AddTest" component={AddTestNavigator} />
     </Add.Navigator>)
 }
+export const PostNavigator = ({ navigation, route }) => {
+    return <Stack.Navigator
+        screenOptions={
+            stackConfig
+        }
+    >
+        <Stack.Screen
+            options={
+                {
+                    title: "Мои квесты",
+                    headerLeft: () => (
+                        <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                            <Item title="Take photo" iconName='ios-menu' onPress={() => navigation.toggleDrawer()}></Item>
+                        </HeaderButtons>
+                    ),
+                }
+            }
+            name="Main"
+            component={MainScreen}
+        />
+        <Stack.Screen
+            options={
+                {
+                    
+                    title: "Обновить квест",
+                }
+            }
+            name="UpdateScreen"
+            screenProps ={{ itemId: 42 }}
+            children={()=><AddNavigator showHeader={false}></AddNavigator>} />
+        <Stack.Screen
+            options={
+                {
+                    title: "Отследить квест",
+                }
+            }
+            name="WatchScreen"
+            component={WatchScreen} />
+        <About.Screen
+            options={
+                {
+                    title: "Предпросмотр",
+                    backgroundColor: THEME.colors.primary,
+                }
+            }
+            name="PreviewScreen"
+            component={PreviewScreen}
+        />
+    </Stack.Navigator>
+}
 
-export const BottomNavigator = () => {
+
+
+export const BottomNavigator = ({ navigation }) => {
     return (
         <Tab.Navigator
             barStyle={{ backgroundColor: THEME.colors.primary }}
             shifting={true}
-
             screenOptions={({ route }) => ({
                 headerShown: false,
                 tabBarIcon: ({ focused, color }) => {

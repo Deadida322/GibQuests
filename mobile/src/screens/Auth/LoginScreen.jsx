@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, ScrollView } from 'react-native';
 import { Card, Button, Text, TextInput } from "react-native-paper"
 import { Formik, ErrorMessage } from 'formik';
+import ShowError from '../../components/UI/ShowError';
 import * as Yup from 'yup';
+import { ToastAndroid } from "react-native"
 import { THEME } from '../../theme';
+import Auth from "../../store/auth"
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { Observer, observer } from "mobx-react-lite"
 
 
 const loginValidation = Yup.object().shape({
@@ -14,12 +20,48 @@ const loginValidation = Yup.object().shape({
 });
 
 const LoginScreen = ({ navigation, route }) => {
+    const [show, setShow] = useState(false)
+    useEffect(() => {
+        const getItem = async () => {
+
+            const user = await AsyncStorage.getItem("user")
+            if (user) {
+                Auth.tryToPair()
+                    .then(res => {
+                        console.log("user")
+                        navigation.navigate("DrawerNavigation")
+                    })
+                    .finally(err => {
+                        setShow(true)
+                    })
+            } else {
+                setShow(true)
+            }
+            
+        }
+        getItem()
+
+    }, [])
+    const [showError, setShowError] = useState(false)
+
     const submitLogin = (data) => {
-        navigation.navigate("DrawerNavigation")
+        Auth.login(data)
+            .then(res => {
+                console.log(res)
+                navigation.navigate("DrawerNavigation")
+            })
+            .catch(() => {
+                setShowError(true)
+            })
     }
+    if (!show) {
+        return
+    }
+
     return (
         <ScrollView >
             <View style={styles.wrapper}>
+                <ShowError visible={showError} error={""} setVisible={setShowError}></ShowError>
                 <Image
                     style={{ width: 180, resizeMode: 'contain', height: 250 }} source={require("../../../assets/logo.png")} />
                 <Card style={styles.card}>
@@ -44,6 +86,7 @@ const LoginScreen = ({ navigation, route }) => {
                                     />
                                     <Text style={{ color: THEME.colors.error }} variant="labelSmall">
                                         <ErrorMessage name="login" />
+                                        {store.loading}
                                     </Text>
                                     <TextInput
                                         mode="outlined"
@@ -58,11 +101,16 @@ const LoginScreen = ({ navigation, route }) => {
                                     />
                                     <Text style={{ color: THEME.colors.error }} variant="labelSmall">
                                         <ErrorMessage name="password" />
+
                                     </Text>
-                                    <Card.Actions>
-                                        <Button onPress={() => navigation.navigate("RegisterScreen")} mode='contained-tonal' style={styles.btn}>Регистрация</Button>
-                                        <Button onPress={handleSubmit} mode='contained' style={styles.btn}>Вход</Button>
-                                    </Card.Actions>
+                                    <Observer>
+                                        {() => (
+                                            <Card.Actions>
+                                                <Text>{Auth.loading}</Text>
+                                                <Button onPress={() => navigation.navigate("RegisterScreen")} mode='contained-tonal' style={styles.btn}>Регистрация</Button>
+                                                <Button disabled={Auth.loading} onPress={handleSubmit} mode='contained' style={styles.btn}>Вход</Button>
+                                            </Card.Actions>)}
+                                    </Observer>
 
                                 </View>)}
                         </Formik>
