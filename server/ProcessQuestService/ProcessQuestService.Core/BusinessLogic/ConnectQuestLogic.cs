@@ -3,6 +3,7 @@ using CommonInfrastructure.Extension;
 using CommonInfrastructure.Http;
 using CommonInfrastructure.Http.Helpers;
 using GenerateQuestsService.DataContracts.DataContracts;
+using GenerateQuestsService.DataContracts.Enums;
 using GenerateQuestsService.DataContracts.Interfaces;
 using ProcessQuestDataContracts.DataContracts;
 using ProcessQuestDataContracts.ViewModels;
@@ -36,13 +37,15 @@ namespace ProcessQuestService.Core.BusinessLogic
                 var questRes = await _generateQuestsApi.GetQuestAsync(
                     _mapper.Map<GetQuestContract>(contract)
                 );
-                if (!questRes.Success)
+                if (!questRes.Success || questRes.Data == null)
                 {
                     return CommonHttpHelper.BuildErrorResponse<StartQuestViewModel>(
                         extErrors: questRes.Errors.ToList());
                 }
-                //если политика квеста публичная и не групповая
-                if (true)
+                var quest = questRes.Data;
+
+                //если политика квеста публичная
+                if (quest.Policy.PolicyType == PolicyType.Public)
                 {
                     //генерируем номер комнаты
                     string roomKey = await GenerateNumberRoom();
@@ -53,7 +56,6 @@ namespace ProcessQuestService.Core.BusinessLogic
                     }
 
                     //устанавливаем квест в кеш на время прохождения квеста
-                    var quest = questRes.Data;
                     await _cacheHelper.SetQuestAsync(quest);
                     
                     //регистрируем прохождение
@@ -79,9 +81,12 @@ namespace ProcessQuestService.Core.BusinessLogic
 
                     return CommonHttpHelper.BuildSuccessResponse(result, HttpStatusCode.OK);
                 }
+                //если политика квеста закрытая - то надо позволить проходить
+                //только самому владельцу квеста
                 else
                 {
-                    //проверяем запущен ли квест
+                    return CommonHttpHelper.BuildErrorResponse<StartQuestViewModel>(
+                       initialError: "Такой тип квеста еще в разработке (можно только публичный)");
                 }
             }
             catch (Exception ex)

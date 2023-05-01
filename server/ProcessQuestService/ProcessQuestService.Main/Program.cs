@@ -13,23 +13,23 @@ using ProcessQuestDataContracts.JsonHelpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//подавляется фильтр для валидации модели по умолчанию
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //builder.Services.Configure<ApiBehaviorOptions>(options =>
 //{
 //    options.SuppressModelStateInvalidFilter = true;
 //});
 
 
-//используем Postgesql
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Postgesql
 //builder.Services.AddDbContext<QuestContext>(options =>
 //    options
 //    .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 //);
 
-//добавляем конфигурации
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 var redisSettings = builder.Configuration.GetSection(nameof(RedisSetting)).Get<RedisSetting>();
 
-// добавление кэширования
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 builder.Services.AddStackExchangeRedisCache(options => {
     options.Configuration = redisSettings.Host;
     //options.InstanceName = redisSettings.InstanceName;
@@ -38,16 +38,16 @@ builder.Services.AddStackExchangeRedisCache(options => {
 
 builder.Services.Configure<RedisSetting>(builder.Configuration.GetSection(nameof(RedisSetting)));
 
-//раздел с конфигурацией ЖЦ 
+//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 
 
 builder.Services.AddScoped<ConnectQuestLogic>();
 builder.Services.AddScoped<ProcessQuestLogic>();
 builder.Services.AddScoped<ProcessQuestCacheHelper>();
 builder.Services.AddScoped<QuestJsonSerializer>();
 
-//добавляем контроллеры и конфигурируем Json опции при десериализации моделей
-//добавляем собственный полиморфный десериализатор
-//и десериализатор енамов
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Json пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.AllowInputFormatterExceptionMessages = true;
@@ -55,7 +55,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new ProcessStageJsonConverterHelper<StageProcess>());
 });
 
-//добавляем Auto mapper
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Auto mapper
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<ProcessQuestMappingProfile>());
 
 //
@@ -65,13 +65,13 @@ builder.Services.AddCors(x => x.AddDefaultPolicy(xx => { xx.AllowAnyOrigin(); xx
 //builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//настраиваем Refit
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Refit
 var refitJsonSerializerOptions = new JsonSerializerOptions
 {
     PropertyNameCaseInsensitive = true
 };
 refitJsonSerializerOptions.SetQuestJsonSerializerOptions();
-//ставим опцию сравнения без учета регистра
+//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 // "Value" = "value"
 var refitSettings = new RefitSettings
 {
@@ -81,7 +81,7 @@ var refitSettings = new RefitSettings
 };
 
 
-//подключаемм Refit клиенты
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Refit пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //!_! ------------------ Generate Quest Service
 var generateQuestAddress = new Uri(builder.Configuration["GenerateQuestSettings:BaseAddress"]);
 builder.Services.AddRefitClient<IGenerateQuestsApi>(refitSettings)
@@ -99,7 +99,7 @@ if (app.Environment.IsDevelopment() || 1 == 1)
 
 app.UseCors();
 
-//app.UseHttpsRedirection();
+//app.UseHttpsRedirection();;
 
 app.MapControllers();
 

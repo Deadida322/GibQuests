@@ -2,6 +2,7 @@
 using CommonDatabase.QuestDatabase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommonDatabase.QuestDatabase.Migrations
 {
     [DbContext(typeof(QuestContext))]
-    partial class QuestContextModelSnapshot : ModelSnapshot
+    [Migration("20230226113904_add_quest_policy_fix")]
+    partial class addquestpolicyfix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,9 +149,6 @@ namespace CommonDatabase.QuestDatabase.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("is_deleted");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
 
                     b.Property<string[]>("RightAnswers")
                         .IsRequired()

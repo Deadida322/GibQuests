@@ -1,4 +1,5 @@
 ﻿using CommonInfrastructure.Http;
+using GenerateQuestsService.DataContracts.Models;
 using GenerateQuestsService.DataContracts.Models.Stages;
 using System.ComponentModel.DataAnnotations;
 
@@ -15,6 +16,9 @@ namespace GenerateQuestsService.DataContracts.DataContracts
         public string Description { get; set; }
 
         public string Img { get; set; }
+
+        [Required(ErrorMessage = "Политика обязательна к заполнению")]
+        public QuestPolicy Policy { get; set; }
 
         public IList<Stage> Stages { get; set; }
     }

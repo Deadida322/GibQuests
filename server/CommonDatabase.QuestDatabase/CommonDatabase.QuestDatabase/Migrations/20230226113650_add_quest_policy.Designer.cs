@@ -2,6 +2,7 @@
 using CommonDatabase.QuestDatabase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommonDatabase.QuestDatabase.Migrations
 {
     [DbContext(typeof(QuestContext))]
-    partial class QuestContextModelSnapshot : ModelSnapshot
+    [Migration("20230226113650_add_quest_policy")]
+    partial class addquestpolicy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,6 +46,9 @@ namespace CommonDatabase.QuestDatabase.Migrations
                         .HasDefaultValue(false)
                         .HasColumnName("is_deleted");
 
+                    b.Property<int>("PolicyId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("StageCount")
                         .HasColumnType("integer");
 
@@ -57,6 +63,8 @@ namespace CommonDatabase.QuestDatabase.Migrations
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("PolicyId");
 
                     b.ToTable("quest", (string)null);
                 });
@@ -81,15 +89,9 @@ namespace CommonDatabase.QuestDatabase.Migrations
                     b.Property<byte>("PolicyType")
                         .HasColumnType("smallint");
 
-                    b.Property<int>("quest_id")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("quest_id")
                         .IsUnique();
 
                     b.ToTable("quest_policy", (string)null);
@@ -146,9 +148,6 @@ namespace CommonDatabase.QuestDatabase.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("is_deleted");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
 
                     b.Property<string[]>("RightAnswers")
                         .IsRequired()
@@ -272,15 +271,15 @@ namespace CommonDatabase.QuestDatabase.Migrations
                     b.ToTable("video_stage", (string)null);
                 });
 
-            modelBuilder.Entity("CommonDatabase.QuestDatabase.Models.QuestPolicyEntity", b =>
+            modelBuilder.Entity("CommonDatabase.QuestDatabase.Models.QuestEntity", b =>
                 {
-                    b.HasOne("CommonDatabase.QuestDatabase.Models.QuestEntity", "Quest")
-                        .WithOne("Policy")
-                        .HasForeignKey("CommonDatabase.QuestDatabase.Models.QuestPolicyEntity", "quest_id")
+                    b.HasOne("CommonDatabase.QuestDatabase.Models.QuestPolicyEntity", "Policy")
+                        .WithMany()
+                        .HasForeignKey("PolicyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Quest");
+                    b.Navigation("Policy");
                 });
 
             modelBuilder.Entity("CommonDatabase.QuestDatabase.Models.Stages.CoordinatesEntity", b =>
@@ -363,9 +362,6 @@ namespace CommonDatabase.QuestDatabase.Migrations
 
             modelBuilder.Entity("CommonDatabase.QuestDatabase.Models.QuestEntity", b =>
                 {
-                    b.Navigation("Policy")
-                        .IsRequired();
-
                     b.Navigation("Stages");
                 });
 

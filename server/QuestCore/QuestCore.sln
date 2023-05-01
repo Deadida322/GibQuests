@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthService.DataContracts",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateQuestsService.DataContracts", "..\CommonDataContracts\GenerateQuestsService.DataContracts\GenerateQuestsService.DataContracts.csproj", "{E780D0AB-F59E-44B6-B5B5-7A5BC458E3CA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessQuestDataContracts", "..\CommonDataContracts\ProcessQuestDataContracts\ProcessQuestDataContracts.csproj", "{51F3E982-B7F6-4951-B7C6-417B01EE3DC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{E780D0AB-F59E-44B6-B5B5-7A5BC458E3CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E780D0AB-F59E-44B6-B5B5-7A5BC458E3CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E780D0AB-F59E-44B6-B5B5-7A5BC458E3CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51F3E982-B7F6-4951-B7C6-417B01EE3DC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51F3E982-B7F6-4951-B7C6-417B01EE3DC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51F3E982-B7F6-4951-B7C6-417B01EE3DC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51F3E982-B7F6-4951-B7C6-417B01EE3DC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

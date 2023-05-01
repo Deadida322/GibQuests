@@ -48,16 +48,25 @@ namespace CommonDatabase.QuestDatabase.MappingProfiles
                 .ForMember(dest => dest.Stages, 
                     opt => opt.MapFrom(x => x.Stages))
                 .ForMember(dest => dest.UserId,
-                    opt => opt.MapFrom(x => x.RequestUserId));
+                    opt => opt.MapFrom(x => x.RequestUserId))
+                .ForAllMembers(opts => 
+                    opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<UpdateQuestContract, QuestEntity>()
                 .ForMember(dest => dest.Stages,
                     opt => opt.MapFrom(x => x.Stages))
                 .ForMember(dest => dest.UserId,
-                    opt => opt.MapFrom(x => x.RequestUserId));
+                    opt => opt.MapFrom(x => x.RequestUserId))
+                .ForAllMembers(opts => 
+                    opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<QuestEntity, QuestViewModel>()
                 .ForMember(dest => dest.Stages,
-                    opt => opt.MapFrom(x => x.Stages));
+                    opt => opt.MapFrom(x => x.Stages))
+                .ForMember(dest => dest.Policy,
+                    opt => opt.MapFrom(x => x.Policy));
             CreateMap<QuestEntity, ShortQuestViewModel>();
+
+            CreateMap<QuestPolicy, QuestPolicyEntity>();
+            CreateMap<QuestPolicyEntity, QuestPolicy>();
         }
     }
 }

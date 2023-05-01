@@ -3,13 +3,14 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-#nuget
-nuget.config
-
-#postgres data
+#database and cache
 postgres-data
+redis-data
+
 #vscode
 .vscode
+#package config
+*.nupkg
 
 # User-specific files
 *.rsuser

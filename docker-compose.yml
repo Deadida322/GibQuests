@@ -8,13 +8,23 @@ services:
             - 5555:5432
         restart: on-failure
         volumes:
+            - ./scripts/db:/docker-entrypoint-initdb.d        
             - ./postgres-data:/var/lib/postgresql/data
         environment:
             POSTGRES_PASSWORD: postgres
             POSTGRES_USER: postgres
-            POSTGRES_DB: QuestsSharp
             PGDATA: "/var/lib/postgresql/data/pgdata"
             
+    cache:
+        image: redis:7.0-alpine
+        restart: on-failure
+        ports:
+            - '6379:6379'
+        environment:
+            - ALLOW_EMPTY_PASSWORD=yes
+        volumes: 
+            - ./redis-data:/data
+
     auth-service:
         build:
             context: ./
@@ -25,6 +35,16 @@ services:
         depends_on:
             - postgresdb
 
+    process-quest-service:
+        build:
+            context: ./
+            dockerfile: ./server/ProcessQuestService/Dockerfile
+        ports:
+            - 9007:80
+        restart: on-failure
+        depends_on:
+            - cache   
+
     generate-quest-service:
         build:
             context: ./
@@ -33,7 +53,7 @@ services:
             - 9005:80
         restart: on-failure
         depends_on:
-            - postgresdb          
+            - postgresdb        
     
     quest-core:
         build:
@@ -47,3 +67,4 @@ services:
 
 volumes:
     postgresdb:
+    cache:

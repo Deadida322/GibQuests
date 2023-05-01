@@ -13,6 +13,10 @@ using System;
 using QuestCore.TokenHelpers;
 using GenerateQuestsService.DataContracts.JsonHelpers;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Rewrite;
+using QuestCore.HelperModels;
+using QuestCore.Helpers;
+using ProcessQuestDataContracts.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +26,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+builder.Services.Configure<ProcessQuestSettings>(builder.Configuration.GetSection("ProcessQuestSettings"));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -94,6 +99,14 @@ builder.Services.AddAuthentication(option =>
 
 builder.Services.AddCors(x => x.AddDefaultPolicy(xx => { xx.AllowAnyOrigin(); xx.AllowAnyHeader(); }));
 
+
+//настраиваем переадресацию 
+//var options = new RewriteOptions()
+//    .Add(RewriteSocketHelper.RewriteSocketRequests);
+    //.AddRewrite("wss://localhost:44393/room/(.*)", builder.Configuration["ProcessQuestSettings:SocketAddress"], skipRemainingRules: false);
+
+
+
 //������������� ������������ refit
 //����������� ��� �������� � camelCase
 var jsonSerializeOptions = new JsonSerializerOptions()
@@ -118,6 +131,11 @@ var generateQuestAddress = new Uri(builder.Configuration["GenerateQuestSettings:
 builder.Services.AddRefitClient<IGenerateQuestsApi>(refitSettings)
     .ConfigureHttpClient(c => c.BaseAddress = generateQuestAddress);
 
+//!_! ------------------ Process Quest Service
+var processQuestAddress = new Uri(builder.Configuration["ProcessQuestSettings:BaseAddress"]);
+builder.Services.AddRefitClient<IProcessQuestApi>(refitSettings)
+    .ConfigureHttpClient(c => c.BaseAddress = processQuestAddress);
+
 
 var app = builder.Build();
 
@@ -136,6 +154,7 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
+//app.UseRewriter(options);
 
 app.MapControllers();
 app.Run();

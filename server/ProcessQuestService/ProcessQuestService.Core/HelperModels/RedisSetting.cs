@@ -5,7 +5,5 @@
         public string RoomKey { get; set; }
 
         public string Host { get; set;}
-
-        public string InstanceName { get; set; }
     }
 }
