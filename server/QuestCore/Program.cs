@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Rewrite;
 using QuestCore.HelperModels;
 using QuestCore.Helpers;
 using ProcessQuestDataContracts.Interfaces;
+using ProcessQuestDataContracts.JsonHelpers;
+using ProcessQuestDataContracts.Models.Stages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.AllowInputFormatterExceptionMessages = true;
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.Converters.Add(new ProcessStageJsonConverterHelper<StageProcess>());
     options.JsonSerializerOptions.Converters.Add(new StageJsonConverterHelper<Stage>());
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
    // options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
@@ -114,7 +117,9 @@ var jsonSerializeOptions = new JsonSerializerOptions()
     PropertyNameCaseInsensitive = false,
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
 };
+jsonSerializeOptions.Converters.Add(new ProcessStageJsonConverterHelper<StageProcess>());
 jsonSerializeOptions.Converters.Add(new StageJsonConverterHelper<Stage>());
+//jsonSerializeOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 
 var refitSettings = new RefitSettings
 {

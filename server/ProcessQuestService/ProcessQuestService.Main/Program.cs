@@ -52,7 +52,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.AllowInputFormatterExceptionMessages = true;
     options.JsonSerializerOptions.SetQuestJsonSerializerOptions();
-    options.JsonSerializerOptions.Converters.Add(new ProcessStageJsonConverterHelper<StageProcess>());
 });
 
 //��������� Auto mapper
