@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   buttonGet.addEventListener("click", async () => {
     let response = await fetch(
-      "http://localhost:9005/ProcesssQuest/ConnectToQuest",
+      "http://localhost:9007/ProcesssQuest/ConnectToQuest",
       {
         method: "POST",
         headers: {
