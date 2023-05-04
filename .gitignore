@@ -11,6 +11,7 @@ redis-data
 .vscode
 #package config
 *.nupkg
+nuget.config
 
 # User-specific files
 *.rsuser

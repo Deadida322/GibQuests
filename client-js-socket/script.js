@@ -8,11 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let stage = {};
   let reqQuest = {
     requestUserId: 1,
-    id: 5,
+    id: 1,
   };
   buttonGet.addEventListener("click", async () => {
     let response = await fetch(
-      "https://localhost:44325/ProcesssQuest/ConnectToQuest",
+      "http://localhost:9007/ProcesssQuest/ConnectToQuest",
       {
         method: "POST",
         headers: {

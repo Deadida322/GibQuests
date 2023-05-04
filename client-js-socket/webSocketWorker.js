@@ -7,7 +7,7 @@ self.addEventListener(
     console.log("data in worker", data);
     switch (data.cmd) {
       case "start":
-        webSocket = new WebSocket(`wss://localhost:44325/room/${data.data}`);
+        webSocket = new WebSocket(`ws://localhost:9007/room/${data.data}`);
         webSocket.onmessage = function (event) {
             console.log('событиые',event.data);
             //alert(`[message] Данные получены с сервера: ${event.data}`);
