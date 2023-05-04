@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ProcessQuestService.Core.Helpers
@@ -18,6 +19,7 @@ namespace ProcessQuestService.Core.Helpers
         public QuestJsonSerializer() {
             _jsonSerializerOptions = new JsonSerializerOptions().SetQuestJsonSerializerOptions();
             _jsonSerializerOptions.Converters.Add(new ProcessStageJsonConverterHelper<StageProcess>());
+            _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
 
         public T Deserialize<T>(string json)

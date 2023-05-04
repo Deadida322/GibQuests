@@ -52,6 +52,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.AllowInputFormatterExceptionMessages = true;
     options.JsonSerializerOptions.SetQuestJsonSerializerOptions();
+    options.JsonSerializerOptions.SetProcessQuestJsonSerializerOptions();
 });
 
 //��������� Auto mapper
