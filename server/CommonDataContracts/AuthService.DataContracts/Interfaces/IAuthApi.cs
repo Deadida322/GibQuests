@@ -36,7 +36,7 @@ namespace AuthService.DataContracts.Interfaces
         Task<CommonHttpResponse<ShortUserViewModel>> GetUserByIdAsync([AliasAs("id")] int id);
 
         [Post("/Auth/GetFilteredUsers")]
-        public Task<CommonHttpResponse<IList<ShortUserViewModel>>> GetFilteredUsersAsync([Body] GetFilteredUsersContract contract);
+        Task<CommonHttpResponse<IList<ShortUserViewModel>>> GetFilteredUsersAsync([Body] GetFilteredUsersContract contract);
 
         #endregion
     }

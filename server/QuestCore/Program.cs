@@ -119,7 +119,7 @@ var jsonSerializeOptions = new JsonSerializerOptions()
 };
 jsonSerializeOptions.Converters.Add(new ProcessStageJsonConverterHelper<StageProcess>());
 jsonSerializeOptions.Converters.Add(new StageJsonConverterHelper<Stage>());
-//jsonSerializeOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+jsonSerializeOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 
 var refitSettings = new RefitSettings
 {
