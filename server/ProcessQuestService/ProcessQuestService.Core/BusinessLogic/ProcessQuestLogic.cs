@@ -58,7 +58,7 @@ namespace ProcessQuestService.Core.BusinessLogic
                 }
                 if(StageProcessing(request.Stage, questStage))
                 {
-                    var nextStage = await _cacheHelper.GetNextStageAsync(quest.Id.ToString(), questStage);
+                    var nextStage = await _cacheHelper.GetNextStageAsync(quest.Id.ToString(), questStage,room, request.UserId);
                     if(nextStage == null)
                     {
                         return BuildWebSocketResponseHelper.BuildErrorResponse("Нет следующего этапа");

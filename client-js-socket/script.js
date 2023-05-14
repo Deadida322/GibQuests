@@ -6,8 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let startQuest;
   let stages = [];
   let stage = {};
+  const userId = 2
   let reqQuest = {
-    requestUserId: 1,
+    requestUserId: userId,
     id: 1,
   };
   buttonGet.addEventListener("click", async () => {
@@ -85,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cmd: "process",
       data: {
         stage: stage,
-        userId: 1,
+        userId: userId,
       },
     });
   });

@@ -15,5 +15,9 @@ namespace ProcessQuestDataContracts.Interfaces
         [Post("/ProcesssQuest/ConnectToQuest")]
         Task<CommonHttpResponse<StartQuestViewModel>> ConnectToQuestAsync(
         [Body] StartQuestContract contract);
+
+        [Post("/ProcesssQuest/GetUserQuestsProcessing")]
+        Task<CommonHttpResponse<IList<UserProcessingQuestViewModel>>> GetUserQuestsProcessingAsync(
+            [Body] CommonHttpRequest contract);
     }
 }

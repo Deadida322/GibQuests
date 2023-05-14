@@ -66,8 +66,42 @@ namespace ProcessQuestService.Core.Helpers
                 process.UserProcessing.Add(userId, 0);
             }
             await _cache.SetStringAsync(roomKey, _jsonSerializer.Serialize(process));
-
         }
+
+        private async Task PassProcessingAsync(string roomKey, int userId, int stageOrder)
+        {
+            string processString = await _cache.GetStringAsync(roomKey);
+            ProcessModel process;
+            if (!processString.IsNullOrEmpty())
+            {
+                process = GetProcessModel(processString);
+                process.UserProcessing[userId] = stageOrder;
+                await _cache.SetStringAsync(roomKey, _jsonSerializer.Serialize(process));
+            }
+        }
+
+        private async Task RemoveProcessingAsync(string roomKey, int userId)
+        {
+            string processString = await _cache.GetStringAsync(roomKey);
+            ProcessModel process;
+            if (!processString.IsNullOrEmpty())
+            {
+                process = GetProcessModel(processString);
+                if(process.UserProcessing.ContainsKey(userId))
+                {
+                    process.UserProcessing.Remove(userId);
+                    if(process.UserProcessing.Count == 0)
+                    {
+                        await RemoveRoomAsync(roomKey);
+                    }
+                    else
+                    {
+                        await _cache.SetStringAsync(roomKey, _jsonSerializer.Serialize(process));
+                    }
+                }
+            }
+        }
+
         private async Task AddRoomAsync(string roomKey)
         {
             string rooms = await _cache.GetStringAsync(_redisSetting.RoomKey);
@@ -78,6 +112,17 @@ namespace ProcessQuestService.Core.Helpers
             else
             {
                 rooms += ',' + roomKey;
+                await _cache.SetStringAsync(_redisSetting.RoomKey, rooms);
+            }
+        }
+
+        private async Task RemoveRoomAsync(string roomKey)
+        {
+            string rooms = await _cache.GetStringAsync(_redisSetting.RoomKey);
+            if (!rooms.IsNullOrEmpty())
+            {
+                rooms = rooms.Replace(roomKey + ",", "");
+                rooms = rooms.Replace(roomKey, "");
                 await _cache.SetStringAsync(_redisSetting.RoomKey, rooms);
             }
         }
@@ -99,8 +144,80 @@ namespace ProcessQuestService.Core.Helpers
             return false;
         }
 
+        public async Task<IList<ProcessModel>> GetQuestProcessModelsAsync(string questId)
+        {
+            var result = new List<ProcessModel>();
+
+            string roomsStr = await _cache.GetStringAsync(_redisSetting.RoomKey);
+            if(roomsStr.IsNullOrEmpty())
+            {
+                return result;
+            }
+            foreach(var roomKey in roomsStr.Split(','))
+            {
+                string roomString = await _cache.GetStringAsync(roomKey);
+                var processModel = roomString.IsNullOrEmpty() ? null : GetProcessModel(roomString);
+                if(processModel != null && processModel.QuestId == questId)
+                {
+                    result.Add(processModel);
+                }
+            }
+            return result;
+        }
+
+        public async Task<ProcessModel> GetUserQuestProcessModelAsync(string questId, int userId)
+        {
+            var processModels = new List<ProcessModel>();
+
+            string roomsStr = await _cache.GetStringAsync(_redisSetting.RoomKey);
+            if (roomsStr.IsNullOrEmpty())
+            {
+                return null;
+            }
+            foreach (var roomKey in roomsStr.Split(','))
+            {
+                string roomString = await _cache.GetStringAsync(roomKey);
+                var processModel = roomString.IsNullOrEmpty() ? null : GetProcessModel(roomString);
+                if (processModel != null && processModel.QuestId == questId)
+                {
+                    processModels.Add(processModel);
+                }
+            }
+            foreach(var process in processModels)
+            {
+                if(process.UserProcessing.ContainsKey(userId))
+                {
+                    return process;
+                }
+            }
+            return null;
+        }
+
+        public async Task<List<ProcessModel>> GetAllUserQuestProcessModelsAsync(int userId)
+        {
+            var processModels = new List<ProcessModel>();
+
+            string roomsStr = await _cache.GetStringAsync(_redisSetting.RoomKey);
+            if (roomsStr.IsNullOrEmpty())
+            {
+                return null;
+            }
+            foreach (var roomKey in roomsStr.Split(','))
+            {
+                string roomString = await _cache.GetStringAsync(roomKey);
+                var processModel = roomString.IsNullOrEmpty() ? null : GetProcessModel(roomString);
+                if (processModel != null && processModel.UserProcessing.ContainsKey(userId))
+                {
+                    processModels.Add(processModel);
+                }
+            }
+            return processModels;
+        }
+
         public async Task<bool> SetQuestAsync(QuestViewModel quest)
         {
+            quest.Stages = quest.Stages.OrderBy(q => q.Order).ToList();
+            
             string questId = quest != null ? quest.Id.ToString() : null;
             if (questId == null)
             {
@@ -119,7 +236,7 @@ namespace ProcessQuestService.Core.Helpers
                     _jsonSerializer.Serialize(quest),
                     new DistributedCacheEntryOptions()
                 {
-                      AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                      //AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
                 });
                 return true;
             }
@@ -142,20 +259,29 @@ namespace ProcessQuestService.Core.Helpers
                 await GetQuestViewModel(process.QuestId);
         }
 
-        public async Task<Stage> GetNextStageAsync(string questId, Stage currentStage)
+        /// <summary>
+        /// Получение квеста по id Квеста
+        /// </summary>
+        public async Task<QuestViewModel> GetQuestForIdAsync(string questId)
+        {
+            return await GetQuestViewModel(questId);
+        }
+
+        public async Task<Stage> GetNextStageAsync(string questId, Stage currentStage, string room, int userId)
         {
             var quest = await GetQuestViewModel(questId);
             if (quest == null) return null;
             if(currentStage.Order == quest.Stages.Count - 1)
             {
+                await RemoveProcessingAsync(room, userId);
                 return new FinalStage();
             }
-            return quest.Stages.Where(el => el.Order == currentStage.Order + 1).FirstOrDefault();
-        }
-
-        public bool IsQuestReady(int id)
-        {
-            return false;
+            else
+            {
+                int nextStage = currentStage.Order + 1;
+                await PassProcessingAsync(room, userId, nextStage);
+                return quest.Stages.Where(el => el.Order == nextStage).FirstOrDefault();
+            }
         }
     }
 }

@@ -17,18 +17,16 @@ namespace ProcessQuestService.Main.Controllers
             _processQuestLogic = processQuestLogic;
         }
 
-        //[HttpPost]
-        //public async Task<CommonHttpResponse<IList<DriverViewModel>>> StartQuestAsync(StartQuestContract contract)
-        //{
-        //    return await _driverLogic.GetFilteredDriversAsync(filter);
-        //}
-
         [HttpPost]
         public async Task<CommonHttpResponse<StartQuestViewModel>> ConnectToQuestAsync(StartQuestContract contract)
         {
             return await _processQuestLogic.ConnectToQuestAsync(contract);
         }
 
-
+        [HttpPost]
+        public async Task<CommonHttpResponse<IList<UserProcessingQuestViewModel>>> GetUserQuestsProcessingAsync(CommonHttpRequest contract)
+        {
+            return await _processQuestLogic.GetUserQuestsProcessingAsync(contract);
+        }
     }
 }
