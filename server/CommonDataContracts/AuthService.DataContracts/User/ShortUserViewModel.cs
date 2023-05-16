@@ -14,5 +14,15 @@
         /// Логин пользователя
         /// </summary>
         public string UserName { get; set; }
+
+        /// <summary>
+        /// имя пользователя
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Фамилия пользователя
+        /// </summary>
+        public string Surname { get; set; }
     }
 }

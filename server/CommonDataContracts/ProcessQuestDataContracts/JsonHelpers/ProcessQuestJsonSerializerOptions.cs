@@ -17,8 +17,6 @@ namespace ProcessQuestDataContracts.JsonHelpers
             options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             //десериализатор Stage
             options.Converters.Add(new ProcessStageJsonConverterHelper<StageProcess>());
-            //десериализатор строковых энамов
-            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             //сравнение полей без учета регистра
             options.PropertyNameCaseInsensitive = true;
             options.AllowTrailingCommas = true;

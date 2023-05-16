@@ -5,9 +5,12 @@ using CommonInfrastructure.Http.Helpers;
 using GenerateQuestsService.DataContracts.DataContracts;
 using GenerateQuestsService.DataContracts.Enums;
 using GenerateQuestsService.DataContracts.Interfaces;
+using GenerateQuestsService.DataContracts.Models.Stages;
 using ProcessQuestDataContracts.DataContracts;
+using ProcessQuestDataContracts.Models.Stages;
 using ProcessQuestDataContracts.ViewModels;
 using ProcessQuestService.Core.Helpers;
+using System.Collections.Generic;
 using System.Net;
 
 namespace ProcessQuestService.Core.BusinessLogic
@@ -29,7 +32,56 @@ namespace ProcessQuestService.Core.BusinessLogic
             _cacheHelper = cacheHelper;
         }
 
-        
+        public async Task<CommonHttpResponse<IList<UserProcessingQuestViewModel>>> GetUserQuestsProcessingAsync(CommonHttpRequest contract)
+        {
+            try
+            {
+                IList<UserProcessingQuestViewModel> result = new List<UserProcessingQuestViewModel>();
+
+                var userId = contract.RequestUserId.Value;
+                var processModels = await _cacheHelper.GetAllUserQuestProcessModelsAsync(userId);
+
+                foreach (var processModel in processModels)
+                {
+                    var questRes = await _generateQuestsApi.GetQuestAsync(
+                        new GetQuestContract
+                        {
+                            Id = Int32.Parse(processModel.QuestId),
+                            RequestId = contract.RequestId,
+                            RequestUserId = contract.RequestUserId,
+                            RequestUserName = contract.RequestUserName
+                        }
+                    );
+                    if (!questRes.Success || questRes.Data == null)
+                    {
+                        return CommonHttpHelper.BuildErrorResponse <IList<UserProcessingQuestViewModel>> (
+                            extErrors: questRes.Errors.ToList());
+                    }
+                    var quest = questRes.Data;
+
+                    string roomKey = processModel.Key;
+                    int userStagePrev = processModel.UserProcessing[userId];
+                    var currentStage = quest.Stages[userStagePrev];
+                    result.Add(new UserProcessingQuestViewModel
+                    {
+                        QuestId = quest.Id,
+                        QuestName = quest.Title,
+                        Room = processModel.Key,
+                        Stage = _mapper.Map<StageProcess>(currentStage)
+
+                    });
+                }
+                return CommonHttpHelper.BuildSuccessResponse(result, HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return CommonHttpHelper.BuildErrorResponse<IList<UserProcessingQuestViewModel>> (
+                   HttpStatusCode.InternalServerError,
+                   ex.ToExceptionDetails(),
+                   $"Ошибка выполнения метода {nameof(GetUserQuestsProcessingAsync)} ReqId : {contract.RequestId}");
+            }
+        }
+
         public async Task<CommonHttpResponse<StartQuestViewModel>> ConnectToQuestAsync(StartQuestContract contract)
         {
             try
@@ -44,6 +96,18 @@ namespace ProcessQuestService.Core.BusinessLogic
                 }
                 var quest = questRes.Data;
 
+                //проверяем, есть ли текущие прохождения у юзера
+                var existProcessing = await _cacheHelper.GetUserQuestProcessModelAsync(quest.Id.ToString(), contract.RequestUserId.Value);
+                if(existProcessing != null)
+                {
+                    var result = new StartQuestViewModel()
+                    {
+                        Room = existProcessing.Key,
+                        Quest = _mapper.Map<QuestProcessViewModel>(quest)
+                    };
+
+                    return CommonHttpHelper.BuildSuccessResponse(result, HttpStatusCode.OK);
+                }
                 //если политика квеста публичная
                 if (quest.Policy.PolicyType == PolicyType.Public)
                 {

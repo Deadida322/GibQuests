@@ -10,6 +10,7 @@ using GenerateQuestsService.DataContracts.Models.Stages;
 using ProcessQuestDataContracts;
 using ProcessQuestDataContracts.Models.Stages;
 using ProcessQuestDataContracts.JsonHelpers;
+using AuthService.DataContracts.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,7 @@ builder.Services.Configure<RedisSetting>(builder.Configuration.GetSection(nameof
 
 builder.Services.AddScoped<ConnectQuestLogic>();
 builder.Services.AddScoped<ProcessQuestLogic>();
+builder.Services.AddScoped<CheckQuestLogic>();
 builder.Services.AddScoped<ProcessQuestCacheHelper>();
 builder.Services.AddScoped<QuestJsonSerializer>();
 
@@ -52,6 +54,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.AllowInputFormatterExceptionMessages = true;
     options.JsonSerializerOptions.SetQuestJsonSerializerOptions();
+    options.JsonSerializerOptions.SetProcessQuestJsonSerializerOptions();
 });
 
 //��������� Auto mapper
@@ -85,6 +88,11 @@ var refitSettings = new RefitSettings
 var generateQuestAddress = new Uri(builder.Configuration["GenerateQuestSettings:BaseAddress"]);
 builder.Services.AddRefitClient<IGenerateQuestsApi>(refitSettings)
     .ConfigureHttpClient(c => c.BaseAddress = generateQuestAddress);
+
+//!_! ------------------ Auth
+var authAddress = new Uri(builder.Configuration["AuthSettings:BaseAddress"]);
+builder.Services.AddRefitClient<IAuthApi>(refitSettings)
+    .ConfigureHttpClient(c => c.BaseAddress = authAddress);
 
 
 var app = builder.Build();
