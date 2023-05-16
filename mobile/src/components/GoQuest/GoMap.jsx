@@ -4,8 +4,6 @@ import * as Location from 'expo-location';
 import { useState, useRef, useEffect } from "react"
 import { useTabIndex, useTabNavigation } from 'react-native-paper-tabs';
 import MapView, { Marker } from 'react-native-maps';
-import { THEME } from '../../theme';
-
 
 export default function GoMap({ stage, index, onNextStage }) {
     const goTo = useTabNavigation();
@@ -45,7 +43,7 @@ export default function GoMap({ stage, index, onNextStage }) {
     }, []);
 
     const transition = () => {
-        onNextStage(idx + 1)
+        onNextStage(idx + 1, stage)
         goTo(idx + 1)
     }
 

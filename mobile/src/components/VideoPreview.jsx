@@ -1,17 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, View, Text} from 'react-native';
-import { Avatar, Button, Card } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {Card } from 'react-native-paper';
 import { WebView } from 'react-native-webview';
-import { THEME } from '../theme';
-
 
 const VideoPreview = ({ stage, onVideoReload}) => {
     const [reformedUri, setReformedUri] = useState("");
     useEffect(()=>{
         const splited = stage.url.split("/")
         setReformedUri("https://www.youtube.com/embed/" + splited[splited.length-1])
-        console.log(reformedUri)
     }, [stage])
 
     return (
@@ -21,20 +17,15 @@ const VideoPreview = ({ stage, onVideoReload}) => {
                 <Card.Content>
                     <View style={{ width: "100%", height: 200 }}>
                         <WebView
-                            // fixes warning when page has an iframe (about:srcdoc)
                             originWhitelist={['http://*', 'https://*', 'about:srcdoc']}
-                            // renderLoading={this._renderLoadingWebView}
                             scrollEnabled
                             source={{ uri: reformedUri }}
                             style={{ borderWidth: 1, borderColor: 'red', flex: 1 }}
                         />
                     </View>
-
                 </Card.Content>
             </Card>
-
         </>
-
     );
 }
 

@@ -35,7 +35,7 @@ const AddTestMain = ({ route, navigation }) => {
             return
         }
         params.onReturn(
-            { ...values, questions }
+            { ...values, questions: questions.map((item, index)=>({...item, order: index})) }
         );
         navigation.goBack()
     }

@@ -4,12 +4,11 @@ import { Card, Button, Text, TextInput } from "react-native-paper"
 import { Formik, ErrorMessage } from 'formik';
 import ShowError from '../../components/UI/ShowError';
 import * as Yup from 'yup';
-import { ToastAndroid } from "react-native"
 import { THEME } from '../../theme';
 import Auth from "../../store/auth"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Observer, observer } from "mobx-react-lite"
+import { Observer } from "mobx-react-lite"
 
 
 const loginValidation = Yup.object().shape({
@@ -23,7 +22,6 @@ const LoginScreen = ({ navigation, route }) => {
     const [show, setShow] = useState(false)
     useEffect(() => {
         const getItem = async () => {
-
             const user = await AsyncStorage.getItem("user")
             if (user) {
                 Auth.tryToPair()
@@ -40,7 +38,6 @@ const LoginScreen = ({ navigation, route }) => {
             
         }
         getItem()
-
     }, [])
     const [showError, setShowError] = useState(false)
 
@@ -86,7 +83,7 @@ const LoginScreen = ({ navigation, route }) => {
                                     />
                                     <Text style={{ color: THEME.colors.error }} variant="labelSmall">
                                         <ErrorMessage name="login" />
-                                        {store.loading}
+                                        {Auth.loading}
                                     </Text>
                                     <TextInput
                                         mode="outlined"

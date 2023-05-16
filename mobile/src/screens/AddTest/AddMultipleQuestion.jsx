@@ -6,12 +6,12 @@ import { THEME } from '../../theme';
 import * as Yup from 'yup';
 
 const initialForm = {
-    question: "",
+    title: "",
     answers: ["Потому что ёж", "Капибара"],
     rightAnswer: []
 }
 const singleValidation = Yup.object().shape({
-    question: Yup.string()
+    title: Yup.string()
         .min(2, 'Слишком короткое название')
         .max(60, 'Слишком длинное название')
         .required('Поле обязательно'),
@@ -27,8 +27,8 @@ const AddSingleQuestion = ({ route, navigation }) => {
         route.params.onReturn({ ...values, type: "multiple" });
         navigation.goBack()
     }
-    const initialForm = route.params?.question || {
-        question: "",
+    const initialForm = route.params?.title || {
+        title: "",
         answers: ["Потому что ёж", "Капибара"],
         rightAnswer: []
     }
@@ -56,16 +56,16 @@ const AddSingleQuestion = ({ route, navigation }) => {
                         <View style={styles.mainForm}>
                             <Text style={styles.title} variant="titleMedium">Вопрос с мультивыбором</Text>
                             <TextInput
-                                error={touched.question && errors.question ? errors.question : ""}
+                                error={touched.title && errors.title ? errors.title : ""}
                                 label="Вопрос"
                                 mode="outlined"
                                 style={styles.input}
-                                onChangeText={handleChange('question')}
-                                onBlur={handleBlur('question')}
-                                value={values.question}
+                                onChangeText={handleChange('title')}
+                                onBlur={handleBlur('title')}
+                                value={values.title}
                             />
                             <Text style={{ color: THEME.colors.error }} variant="labelSmall">
-                                <ErrorMessage name="question" />
+                                <ErrorMessage name="title" />
                             </Text>
                             <Card style={styles.card}>
                                 <Card.Content >

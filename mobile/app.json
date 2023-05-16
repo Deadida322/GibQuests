@@ -29,6 +29,7 @@
       "supportsTablet": true
     },
     "android": {
+      "usesCleartextTraffic": true,
       "package": "com.gib.gibquest",
       "versionCode": 1,
       "permissions": [

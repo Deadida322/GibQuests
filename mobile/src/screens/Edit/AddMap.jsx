@@ -37,7 +37,7 @@ const AddMap = ({ route, navigation }) => {
 
     const [myPosition, setMyPosition] = useState(coords)
     const [currentPosition, setCurrentPosition] = useState(coords)
-    const [mapPosition, setMapPosition] = useState(null)
+    const [mapPosition, setMapPosition] = useState(false)
 
     const askPos = async () => {
         let loc = await Location.getCurrentPositionAsync(
@@ -62,7 +62,6 @@ const AddMap = ({ route, navigation }) => {
     const setPositionToMap = (e) => {
         setCurrentPosition(e)
     }
-
 
     return (
         <>

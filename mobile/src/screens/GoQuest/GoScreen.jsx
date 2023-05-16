@@ -1,10 +1,12 @@
-import { Button, Title, Paragraph, Text } from 'react-native-paper';
 import { Tabs, TabScreen, useTabIndex, useTabNavigation } from 'react-native-paper-tabs';
+import { ActivityIndicator, Text, Banner } from 'react-native-paper';
+import ProcessError from './ProcessError';
 import auth from "../../store/auth"
 import { View, StyleSheet, ScrollView, } from 'react-native';
 import GoMap from '../../components/GoQuest/GoMap';
 import { useEffect, useState } from "react"
 import GoText from "../../components/GoQuest/GoText"
+
 import GoVideo from '../../components/GoQuest/GoVideo';
 import GoQR from '../../components/GoQuest/GoQR';
 import GoTest from '../../components/GoQuest/GoTest/index';
@@ -55,10 +57,12 @@ const getGoComponent = (stage, index, onNextStage, availableStep) => {
 export default function GoScreen({ navigation, route }) {
     const quest = route.params.quest
     const [index, setIndex] = useState(useTabIndex())
+    const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
     const [availableStep, setAvailableStep] = useState(0)
     const [socket, setSocket] = useState("")
-    const baseUrl = "wss://192.168.43.173:9007/api/room"
-    useEffect(()=>{
+    const baseUrl = "ws://192.168.43.173:9007/room"
+    useEffect(() => {
         request({
             url: `/ProcessQuest/ConnectToQuest`,
             method: "POST",
@@ -66,20 +70,36 @@ export default function GoScreen({ navigation, route }) {
             data: {
                 id: quest.id
             }
-        }).then((res)=>{
-            console.log(res)
+        }).then((res) => {
+            const url = `${baseUrl}/${res.room}`
+            const ws = new WebSocket(url)
+            setSocket(ws)
+            ws.onerror = (err) => console.log(err, 'err')
+            ws.onopen = (e) => console.log(e, "open")
+            ws.onmessage = e => {
+                const res = JSON.parse(e.data)
+                if(res.success){
+                    setIndex(res.stage)
+                    setAvailableStep(res.stage)
+                    
+                } else{
+                    setError(res.error)
+                }
+                setLoading(false)
+            }
         })
-        // const ws = new WebSocket('ws://host.com/path');
-        // setSocket(ws)
     }, [])
-    const onNextStage = (idx) => {
-        setIndex(idx)
-        setAvailableStep(idx)
+    const onNextStage = (idx, stage) => {
+        setLoading(true)
+        socket.send(JSON.stringify(stage))
+    }
+    const onGoBack = ()=>{
+        setError("")
     }
     return (
         <View style={{ flex: 1 }}>
             <Tabs
-                onChangeIndex={e => setIndex(e)}
+                onChangeIndex={e => ()=>{setIndex(e); setError(" ")}}
                 showTextLabel={true}
                 style={{ backgroundColor: "transparent", height: 1200 }}
                 mode="scrollable"
@@ -91,7 +111,18 @@ export default function GoScreen({ navigation, route }) {
                     <TabScreen key={key} label={item.type} disabled={key > availableStep} icon={getIcon(item.type)} false>
                         <View style={styles.goContainer}>
                             <ScrollView>
-                                {getGoComponent(item, key, onNextStage, availableStep)}
+                                {loading ? 
+                                    <View style={styles.loadingContainer}>
+                                        <ActivityIndicator size={'large'} animating={true} />
+                                        
+                                    </View>
+                                    
+                                    : getGoComponent(item, key, onNextStage, availableStep)
+                                }
+                                {
+                                    error ?
+                                    <ProcessError idx={key} error={error} onGoBack={()=>onGoBack()}/> :''
+                                }
                             </ScrollView>
                         </View>
                     </TabScreen>)
@@ -103,5 +134,7 @@ export default function GoScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-    
+    loadingContainer:{
+        marginTop: 100
+    }
 })

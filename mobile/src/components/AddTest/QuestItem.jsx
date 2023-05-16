@@ -26,7 +26,7 @@ const QuestItem = ({question, index, onQuestionEdit, onQuestionDelete}) => {
 
     return (
         <Card style={styles.card}>
-            <Card.Title title={question.question} 
+            <Card.Title title={question.title} 
                 left={() =><Avatar.Icon size={42} icon={getIcon(question.type)}></Avatar.Icon>} subtitle={index + " Вопрос"}
             />
    

@@ -16,7 +16,7 @@ export default function GoTest({ stage, index, onNextStage }) {
     const idx = useTabIndex()
 
     const transition = () => {
-        onNextStage(idx + 1)
+        onNextStage(idx + 1, stage)
         goTo(idx + 1)
     }
 

@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import AppHeaderIcon from '../components/AppHeaderIcon';
 import MainScreen from '../screens/MainScreen';
-import PostScreen from '../screens/PostScreen';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { THEME } from '../theme';
 import BookMarkedScreen from '../screens/BookMarkedScreen'
@@ -56,13 +55,15 @@ export const AddTestNavigator = ({ navigation, route }) => {
     return (<AddTest.Navigator
         screenOptions={
             {
-                ...stackConfig
+                ...stackConfig,
+                headerShown: false
             }
         }
     >
         <AddTest.Screen
             options={
-                { title: "Создание Теста" }
+                { title: "Создание Теста"  }
+                
             }
             screenProps={
                 { aaa: "aaa" }

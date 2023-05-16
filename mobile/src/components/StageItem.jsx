@@ -1,5 +1,4 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Card, Button, Avatar } from "react-native-paper"
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { THEME } from "../theme"

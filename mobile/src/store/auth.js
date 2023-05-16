@@ -23,16 +23,12 @@ export function Auth() {
                        
                     })
                         .then((res) => {
-                           
                             this.user = res
                             this.accessToken = res.token
                             resolve(res)
                         })
                         .catch((err) => {
                             reject(err);
-                        }).finally(()=>{
-                            
-
                         })
                 });
             },
@@ -52,7 +48,6 @@ export function Auth() {
                     })
                         .then((res) => {
                             runInAction(() => {
-                                console.log(res, "login then")
                                 this.loading = false;
                                 this.user = res;
                                 this.accessToken = res.token;

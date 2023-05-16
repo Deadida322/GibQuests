@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Card, Button, Text, TextInput } from "react-native-paper"
 import { Formik, ErrorMessage } from 'formik';
@@ -18,13 +18,11 @@ const loginValidation = Yup.object().shape({
 });
 
 const RegisterScreen = ({ navigation, route }) => {
-
     const [image, setImage] = useState("")
     const [showError, setShowError] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState(false)
-
     const initialValues = {
         name: "",
         surname: "",
@@ -47,7 +45,6 @@ const RegisterScreen = ({ navigation, route }) => {
         }).then((res) => {
             setIsLoading(false)
             setSuccess(true)
-            // navigation.navigate("LoginScreen")
         }).catch((err) => {
             console.log(err)
             setError(err.join(" "))
@@ -151,8 +148,7 @@ const RegisterScreen = ({ navigation, route }) => {
                     )}
                 </Formik>
             </View>
-
-        </ScrollView >
+        </ScrollView>
     );
 }
 

@@ -11,7 +11,7 @@ export default function GoQR({ stage, index, onNextStage }) {
     const goTo = useTabNavigation();
     const idx = useTabIndex()
     const transition = () => {
-        onNextStage(idx + 1)
+        onNextStage(idx + 1, stage)
         goTo(idx + 1)
         setGoScan(false)
     }

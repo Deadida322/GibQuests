@@ -47,7 +47,6 @@ const QuestItem = ({ quest, onQuestPreview, isAdmin = false, onDelete, onOpen, o
                                     <Menu.Item leadingIcon="account-eye" onPress={() => { onWatch(); setShowMenu(false) }} title="Отследить" />
                                     <Menu.Item leadingIcon="share-outline" onPress={() => { }} title="Поделиться" />
                                     <Menu.Item leadingIcon="delete-outline" onPress={() => { onDelete(); setShowMenu(false) }} title="Удалить" />
-
                                 </Menu>
                                 <Button icon="eye" mode="contained" onPress={onQuestPreview}>Посмотреть</Button>
                             </>

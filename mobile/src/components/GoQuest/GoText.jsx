@@ -6,17 +6,15 @@ export default function GoText({ stage, index, onNextStage }) {
     const goTo = useTabNavigation();
     const idx = useTabIndex()
     const transition = () => {
-        onNextStage(idx + 1)
+        onNextStage(idx + 1, stage)
         goTo(idx + 1)
     }
     return (
         <Card style={styles.card}>
             <Text style={styles.chip}><Chip icon="card-text-outline">Этап {index + 1}</Chip></Text>
-
             <Card.Title title={stage.title} />
-
             <Card.Content>
-                <Text variant="bodyMedium">{stage.description}</Text>
+                <Text variant="bodyMedium">{stage.text || stage.description}</Text>
             </Card.Content>
             <Card.Actions>
                 <Button>Назад</Button>
