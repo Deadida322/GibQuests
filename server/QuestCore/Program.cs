@@ -53,7 +53,7 @@ builder.Services.AddSwaggerGen(swagger =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter into input token value without quotes.\r\n\r\nExample: 2cdfcdf342342344232",
     });
     swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -87,8 +87,6 @@ builder.Services.AddAuthentication(option =>
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-        //����������� ��������� ����� ������
-        //�.�. ���������� �������� "� �����������"
         LifetimeValidator = QuestCoreLifetimeValidator.CheckLifeTime
     };
 });
@@ -119,7 +117,8 @@ var jsonSerializeOptions = new JsonSerializerOptions()
 };
 jsonSerializeOptions.Converters.Add(new ProcessStageJsonConverterHelper<StageProcess>());
 jsonSerializeOptions.Converters.Add(new StageJsonConverterHelper<Stage>());
-jsonSerializeOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+//тут был баг с созданием квеста
+//jsonSerializeOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 
 var refitSettings = new RefitSettings
 {
