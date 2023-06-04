@@ -31,11 +31,11 @@ const MapPreview = ({ stage, currentPosition, setMapPosition, mapPosition }) => 
                         onPress={(e) => {
                             setMapPosition(e.nativeEvent.coordinate)
                         }}
-                        // initialRegion={{
-                        //     // ...currentPosition,
-                        //     latitudeDelta: 0.0922,
-                        //     longitudeDelta: 0.0421,
-                        // }}
+                        initialRegion={{
+                            ...currentPosition,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}
                         showsUserLocation={true}
                         userLocationPriority={'high'}
                         minZoomLevel={8}

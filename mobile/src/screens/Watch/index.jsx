@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Button, Text, Card } from "react-native-paper"
 import QuestItem from '../../components/QuestItem';
 import WatchProgress from '../../components/Watch/WatchProgress';
+import request from '../../request';
 import { THEME } from '../../theme';
 
 const quest = {
@@ -111,13 +112,14 @@ const progress = [{
         surname: "Алиев"
     },
     progress: {
-        stage: 7,
-        stageName: "УБить всех пчёл",
+        stage: 6,
+        stageName: "Полюбить всех пчёл",
         currentTime: "00:00"
     }
 }]
 
 const WatchScreen = ({ navigation, route }) => {
+   
     return (
         <View style={styles.wrapper}>
             <QuestItem quest={quest} shortInfo={true}></QuestItem>

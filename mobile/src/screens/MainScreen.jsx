@@ -80,6 +80,7 @@ export default observer(function MainScreen({ navigation, route }) {
         navigation.addListener('focus', () => {
             BackHandler.addEventListener('hardwareBackPress', onBackPress)
             fetchCreated()
+            fetchProcessed()
         })
         navigation.addListener('blur', () => {
             BackHandler.removeEventListener('hardwareBackPress', onBackPress)

@@ -100,7 +100,7 @@ builder.Services.AddAuthentication(option =>
 //builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AuthMappingProfile>());
 
 
-builder.Services.AddCors(x => x.AddDefaultPolicy(xx => { xx.AllowAnyOrigin(); xx.AllowAnyHeader(); }));
+builder.Services.AddCors(x => x.AddDefaultPolicy(xx => { xx.WithOrigins("*").AllowAnyHeader().AllowAnyMethod(); }));
 
 
 //настраиваем переадресацию 

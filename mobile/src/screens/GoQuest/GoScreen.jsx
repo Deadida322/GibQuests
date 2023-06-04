@@ -42,7 +42,10 @@ const getGoComponent = (stage, index, onNextStage, availableStep) => {
         case "map": {
             return <GoMap index={index} stage={stage} onNextStage={onNextStage} availableStep={availableStep}></GoMap>
         }
-        case "qrcode": {
+        case "qrCode": {
+            return <GoQR index={index} stage={stage} onNextStage={onNextStage} availableStep={availableStep}></GoQR>
+        }
+        case "qrСode": {
             return <GoQR index={index} stage={stage} onNextStage={onNextStage} availableStep={availableStep}></GoQR>
         }
         case "test": {
@@ -107,7 +110,7 @@ export default function GoScreen({ navigation, route }) {
                 showLeadingSpace={true}
                 disableSwipe={true}
             >
-                {quest.stages.map((item, key) => (
+                {quest.stages.reverse().map((item, key) => (
                     <TabScreen key={key} label={item.type} disabled={key > availableStep} icon={getIcon(item.type)} false>
                         <View style={styles.goContainer}>
                             <ScrollView>
@@ -116,7 +119,6 @@ export default function GoScreen({ navigation, route }) {
                                         <ActivityIndicator size={'large'} animating={true} />
                                         
                                     </View>
-                                    
                                     : getGoComponent(item, key, onNextStage, availableStep)
                                 }
                                 {

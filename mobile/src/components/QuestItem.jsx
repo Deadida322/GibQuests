@@ -8,7 +8,6 @@ const QuestItem = ({ quest, onQuestPreview, isAdmin = false, onDelete, onOpen, o
     const [showMenu, setShowMenu] = useState(false)
     const [image, setImage] = useState(quest.img)
     useEffect(()=>{
-        console.log(image)
         if(image.indexOf("data:image/jpeg;base64") === -1){
             setImage(initialImage)
         }
@@ -19,7 +18,7 @@ const QuestItem = ({ quest, onQuestPreview, isAdmin = false, onDelete, onOpen, o
                 <Card.Cover style={{ marginTop: -8 }} source={{ uri: image }} />
             </View>
 
-            <Card.Title title={quest.title} subtitle={`${quest.stageCount} этапов`} />
+            <Card.Title title={quest.title} subtitle={`${quest.stageCount || quest.stages.length } этапов`} />
             {!shortInfo ?
                 <Card.Content>
                     <Text>{quest.description}</Text>

@@ -38,9 +38,11 @@ const request = async function (options) {
     };
 
     try {
-        const response = await client(options);
+        const response = await client(options).then((res)=>{
+            console.log(res, "log from then")
+        });
         console.log(response, "response")
-        return onSuccess(response.data || response);
+        return onSuccess(response?.data || response);
     } catch (error) {
         console.log(error, "error")
         return onError(error);

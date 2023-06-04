@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, ToastAndroid } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-
 import { Card, Button, Banner, Text } from 'react-native-paper';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';

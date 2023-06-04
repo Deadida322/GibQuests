@@ -33,12 +33,6 @@ const WatchProgress = ({ progress, count }) => {
                 </Text>
                 <Text variant='titleMedium' style={{color: THEME.colors.primary}}> {progress.progress.stageName}</Text>
             </Card.Content>
-            <Card.Content style={{flexDirection: "row", alignItems: "center"}}>
-                <Text>
-                    Текущее время - 
-                </Text>
-                <Text variant='titleMedium' style={{color: THEME.colors.primary}}> {progress.progress.currentTime}</Text>
-            </Card.Content>
         </Card>
     );
 }

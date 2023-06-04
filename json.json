@@ -1,0 +1,35 @@
+{
+    "description": "Vvgcccvgvv",
+    "img": "data:image/jpeg;base64,/9x64BnsH8Z64LSoVlsZ5",
+    "policy": {
+        "memberType": "group",
+        "policyType": "public"
+    },
+    "stages": [
+        {
+            "order": 0,
+            "questions": [
+                {
+                    "question": "Vhhgc",
+                    "rightAnswer": [
+                        "Vbhcc"
+                    ],
+                    "type": "insert",
+                    "answers": [
+                        "Vbhcc"
+                    ],
+                    "order": 0
+                }
+            ],
+            "title": "Vbbccc",
+            "type": "test"
+        },
+        {
+            "order": 1,
+            "text": "Ghhgfcucgugcugccug",
+            "title": " Yg cugugc",
+            "type": "text"
+        }
+    ],
+    "title": "Cggcff"
+}
