@@ -1,0 +1,37 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NUXT_PORT=8080 nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "core-js": "^3.19.3",
+    "leaflet": "^1.8.0",
+    "qr-scanner": "^1.4.1",
+    "sweetalert2": "^11.7.5",
+    "vue": "^2.6.14",
+    "vue-dndrop": "^1.2.8",
+    "vue-fragment": "^1.6.0",
+    "vue-html-editor": "^0.2.1",
+    "vue-qr-generator": "^3.0.1",
+    "vue-server-renderer": "^2.6.14",
+    "vue-template-compiler": "^2.6.14",
+    "vue-wysiwyg": "^1.7.2",
+    "vue2-leaflet": "^2.7.1",
+    "vuelidate": "^0.7.7",
+    "vuetify": "^2.6.1",
+    "webpack": "^4.45.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.17",
+    "@nuxtjs/vuetify": "^1.12.3",
+    "browser-image-compression": "^2.0.0",
+    "cross-env": "^7.0.3",
+    "nuxt": "^2.15.8"
+  }
+}
