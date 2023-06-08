@@ -41,6 +41,7 @@ namespace QuestCore.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public Task<CommonHttpResponse<IList<ShortQuestViewModel>>> GetFilteredQuests(GetFilteredQuestsContract contract)
         {
             return _generateQuestsApi.GetFilteredQuestsAsync(contract);
