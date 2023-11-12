@@ -102,11 +102,9 @@ builder.Services.AddCors(x => x.AddDefaultPolicy(xx => { xx.WithOrigins("*").All
 
 
 //настраиваем переадресацию 
-//var options = new RewriteOptions()
-//    .Add(RewriteSocketHelper.RewriteSocketRequests);
-    //.AddRewrite("wss://localhost:44393/room/(.*)", builder.Configuration["ProcessQuestSettings:SocketAddress"], skipRemainingRules: false);
-
-
+var options = new RewriteOptions()
+    .Add(RewriteSocketHelper.RewriteSocketRequests);
+//var options = new RewriteOptions().AddRedirect(@"\*check\*", "http://localhost:65456/check/1");
 
 //������������� ������������ refit
 //����������� ��� �������� � camelCase
@@ -143,6 +141,7 @@ builder.Services.AddRefitClient<IProcessQuestApi>(refitSettings)
 
 var app = builder.Build();
 
+app.UseRewriter(options);
 
 if (app.Environment.IsDevelopment() || 1 == 1)
 {
@@ -155,10 +154,17 @@ if (app.Environment.IsDevelopment() || 1 == 1)
 
 app.UseCors();
 
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/test", async context =>
+    {
+        await context.Response.WriteAsync("Hello World!");
+    });
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-//app.UseRewriter(options);
 
 app.MapControllers();
 app.Run();

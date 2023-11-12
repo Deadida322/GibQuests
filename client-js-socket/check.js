@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let questId = 1;
     buttonCheck.addEventListener("click", async () => {
-        webSocket = new WebSocket(`ws://localhost:9007/check/${questId}`);
+        webSocket = new WebSocket(`ws://localhost:61919/check/${questId}`);
         webSocket.onopen = function (e) {
             webSocket.send(JSON.stringify("start"));
             console.log('start');

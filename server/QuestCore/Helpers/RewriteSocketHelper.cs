@@ -8,11 +8,11 @@ namespace QuestCore.Helpers
         {
             var path = context.HttpContext.Request.Path;
             var pathValue = path.Value; // запрошенный путь
-            if (path.StartsWithSegments(new PathString("/room"), StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWithSegments(new PathString("/check"), StringComparison.OrdinalIgnoreCase))
             {
-                context.HttpContext.Request.Path = new PathString("/localhost:44325/room/1");
+                context.HttpContext.Request.Host = new HostString("localhost:65456");
+                context.HttpContext.Request.Path = new PathString("/check/1");
             }
-            return;
         }
     }
 }
