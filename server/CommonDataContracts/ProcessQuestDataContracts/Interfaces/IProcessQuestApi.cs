@@ -13,7 +13,7 @@ namespace ProcessQuestDataContracts.Interfaces
     public interface IProcessQuestApi
     {
         [Post("/ProcesssQuest/ConnectToQuest")]
-        Task<CommonHttpResponse<StartQuestViewModel>> ConnectToQuestAsync(
+        Task<CommonHttpResponse<StartQuestViewModel>> StartQuestAsync(
         [Body] StartQuestContract contract);
 
         [Post("/ProcesssQuest/GetUserQuestsProcessing")]

@@ -74,6 +74,44 @@ namespace ProcessQuestService.Core.BusinessLogic
                 return BuildWebSocketResponseHelper.BuildErrorResponse(ex.Message);
             }
         }
+
+        public async Task<WebSocketResponse> ProcessAsync(string room, WebSocketRequest request)
+        {
+            try
+            {
+                if (request == null)
+                {
+                    return BuildWebSocketResponseHelper.BuildErrorModelResponse();
+                }
+                var quest = await _cacheHelper.GetQuestAsync(room);
+                if (quest == null)
+                {
+                    return BuildWebSocketResponseHelper.BuildErrorResponse("Нет такого квеста");
+                }
+                var questStage = quest.Stages.Where(el => el.Equals(request.Stage)).FirstOrDefault();
+
+                if (questStage == null)
+                {
+                    return BuildWebSocketResponseHelper.BuildErrorResponse("Нет такого этапа");
+                }
+                if (StageProcessing(request.Stage, questStage))
+                {
+                    var nextStage = await _cacheHelper.GetNextStageAsync(quest.Id.ToString(), questStage, room, request.UserId);
+                    if (nextStage == null)
+                    {
+                        return BuildWebSocketResponseHelper.BuildErrorResponse("Нет следующего этапа");
+                    }
+                    return BuildWebSocketResponseHelper.BuildSucsessResponse(
+                        _mapper.Map<StageProcess>(nextStage));
+                }
+                return BuildWebSocketResponseHelper.BuildErrorChoiseResponse();
+
+            }
+            catch (Exception ex)
+            {
+                return BuildWebSocketResponseHelper.BuildErrorResponse(ex.Message);
+            }
+        }
         private bool StageProcessing<T>(T userStage, T questStage) where T : Stage
         {
             switch(userStage.Type)

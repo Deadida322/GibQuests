@@ -53,7 +53,7 @@ namespace ProcessQuestService.Core.BusinessLogic
                     {
                         userInfo = usserRes.Data;
                     }
-                    var userStage = quest.Stages[userProcess.Value];
+                    var userStage = quest.Stages[userProcess.Value.Stage];
                     var userProgress = new ProgressUserModel()
                     {
                         Stage = userStage.Order,

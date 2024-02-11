@@ -6,6 +6,7 @@ using ProcessQuestDataContracts.DataContracts;
 using ProcessQuestDataContracts.Models;
 using ProcessQuestDataContracts.Models.Stages;
 using ProcessQuestDataContracts.ViewModels;
+using ProcessQuestService.Core.HelperModels;
 
 namespace ProcessQuestService.Core.MappingProfiles
 {
@@ -50,6 +51,10 @@ namespace ProcessQuestService.Core.MappingProfiles
 
             CreateMap<QuestViewModel, QuestProcessViewModel>();
             CreateMap<QuestProcessViewModel, QuestViewModel>();
+
+            
+            CreateMap<RegisterProcessUserModel, StartQuestViewModel>();
+            CreateMap<StartQuestViewModel, RegisterProcessUserModel>();
         }
     }
 }

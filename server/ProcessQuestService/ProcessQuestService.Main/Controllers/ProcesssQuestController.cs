@@ -18,9 +18,9 @@ namespace ProcessQuestService.Main.Controllers
         }
 
         [HttpPost]
-        public async Task<CommonHttpResponse<StartQuestViewModel>> ConnectToQuestAsync(StartQuestContract contract)
+        public async Task<CommonHttpResponse<StartQuestViewModel>> RegisterRoomAsync(RegisterRoomContract contract)
         {
-            return await _processQuestLogic.ConnectToQuestAsync(contract);
+            return await _processQuestLogic.RegisterRoomAsync(contract);
         }
 
         [HttpPost]

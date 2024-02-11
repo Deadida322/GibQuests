@@ -5,12 +5,11 @@ using CommonInfrastructure.Http.Helpers;
 using GenerateQuestsService.DataContracts.DataContracts;
 using GenerateQuestsService.DataContracts.Enums;
 using GenerateQuestsService.DataContracts.Interfaces;
-using GenerateQuestsService.DataContracts.Models.Stages;
+using Microsoft.AspNetCore.Http;
 using ProcessQuestDataContracts.DataContracts;
 using ProcessQuestDataContracts.Models.Stages;
 using ProcessQuestDataContracts.ViewModels;
-using ProcessQuestService.Core.Helpers;
-using System.Collections.Generic;
+using ProcessQuestService.ProcessQuestDatabase.Interfaces;
 using System.Net;
 
 namespace ProcessQuestService.Core.BusinessLogic
@@ -19,17 +18,16 @@ namespace ProcessQuestService.Core.BusinessLogic
     {
         private IGenerateQuestsApi _generateQuestsApi;
         private IMapper _mapper;
-        private Random _random;
-        private ProcessQuestCacheHelper _cacheHelper;
+        private IProcessQuestStorage _processQuestStorage;
+        private IProcessCacheStorage _cacheStorage;
 
         public ConnectQuestLogic(IGenerateQuestsApi generateQuestsApi,
-            IMapper mapper,
-            ProcessQuestCacheHelper cacheHelper)
+            IMapper mapper, IProcessQuestStorage processQuestStorage, IProcessCacheStorage processCacheStorage)
         {
             _generateQuestsApi = generateQuestsApi;
             _mapper = mapper;
-            _random = new Random();
-            _cacheHelper = cacheHelper;
+            _processQuestStorage = processQuestStorage;
+            _cacheStorage = processCacheStorage;
         }
 
         public async Task<CommonHttpResponse<IList<UserProcessingQuestViewModel>>> GetUserQuestsProcessingAsync(CommonHttpRequest contract)
@@ -54,13 +52,13 @@ namespace ProcessQuestService.Core.BusinessLogic
                     );
                     if (!questRes.Success || questRes.Data == null)
                     {
-                        return CommonHttpHelper.BuildErrorResponse <IList<UserProcessingQuestViewModel>> (
+                        return CommonHttpHelper.BuildErrorResponse<IList<UserProcessingQuestViewModel>>(
                             extErrors: questRes.Errors.ToList());
                     }
                     var quest = questRes.Data;
 
                     string roomKey = processModel.Key;
-                    int userStagePrev = processModel.UserProcessing[userId];
+                    int userStagePrev = processModel.UserProcessing[userId].Stage;
                     var currentStage = quest.Stages[userStagePrev];
                     result.Add(new UserProcessingQuestViewModel
                     {
@@ -75,102 +73,104 @@ namespace ProcessQuestService.Core.BusinessLogic
             }
             catch (Exception ex)
             {
-                return CommonHttpHelper.BuildErrorResponse<IList<UserProcessingQuestViewModel>> (
+                return CommonHttpHelper.BuildErrorResponse<IList<UserProcessingQuestViewModel>>(
                    HttpStatusCode.InternalServerError,
                    ex.ToExceptionDetails(),
                    $"Ошибка выполнения метода {nameof(GetUserQuestsProcessingAsync)} ReqId : {contract.RequestId}");
             }
         }
 
-        public async Task<CommonHttpResponse<StartQuestViewModel>> ConnectToQuestAsync(StartQuestContract contract)
+        public async Task<CommonHttpResponse<RegisterRoomViewModel>> RegisterRoomAsync(RegisterRoomContract contract)
         {
             try
             {
-                var questRes = await _generateQuestsApi.GetQuestAsync(
-                    _mapper.Map<GetQuestContract>(contract)
-                );
-                if (!questRes.Success || questRes.Data == null)
+                //получаем квест из кеша
+                var quest = await _cacheStorage.GetQuestAsync(new GetProcessQuestContract
                 {
-                    return CommonHttpHelper.BuildErrorResponse<StartQuestViewModel>(
-                        extErrors: questRes.Errors.ToList());
-                }
-                var quest = questRes.Data;
-
-                //проверяем, есть ли текущие прохождения у юзера
-                var existProcessing = await _cacheHelper.GetUserQuestProcessModelAsync(quest.Id.ToString(), contract.RequestUserId.Value);
-                if(existProcessing != null)
+                    Id = contract.QuestId,
+                });
+                //если его нет, то получаем его и устанавливаем в кеш
+                if (quest == null)
                 {
-                    var result = new StartQuestViewModel()
+                    var questRes = await _generateQuestsApi.GetQuestAsync(
+                        new GetQuestContract
+                        {
+                            Id = contract.QuestId
+                        }
+                     );
+                    if (!questRes.Success || questRes.Data == null)
                     {
-                        Room = existProcessing.Key,
+                        return CommonHttpHelper.BuildErrorResponse<RegisterRoomViewModel>(
+                           initialError: "Не удалось получить квест");
+                    }
+                    var questViewModel = questRes.Data;
+                    bool isSetQuest = await _cacheStorage.SetQuestAsync(questViewModel);
+
+                    if (isSetQuest)
+                    {
+                        return CommonHttpHelper.BuildErrorResponse<RegisterRoomViewModel>(
+                      initialError: "Не удалось установить квест");
+                    }
+                    quest = questViewModel;
+                }
+
+                //в случае "жесткой" политики блокирум доступ к квесту
+                if ((quest.Policy.PolicyType == PolicyType.Private || quest.Policy.PolicyType == PolicyType.Link) && contract.RequestUserId != quest.UserId)
+                {                                                                                                                                   
+                    return CommonHttpHelper.BuildErrorResponse<RegisterRoomViewModel>(
+                            statusCode: HttpStatusCode.Forbidden,
+                            initialError: "Нет доступа");
+                }
+
+
+                if (contract.RequestUserId.HasValue)
+                {
+                    //получаем номер комнаты
+                    var roomKey = await GenerateNumberRoom();
+                    if (roomKey == null)
+                    {
+                        return CommonHttpHelper.BuildErrorResponse<RegisterRoomViewModel>(
+                            initialError: "Не удалось создать комнату");
+                    }
+
+                    //создаем комнату в бд и в кеше
+                    contract.Key = roomKey;
+                    await _processQuestStorage.CreateRoomAsync(contract);
+                    await _cacheStorage.CreateRoomAsync(contract);
+
+                    var result = new RegisterRoomViewModel
+                    {
+                        Key = roomKey.Value,
                         Quest = _mapper.Map<QuestProcessViewModel>(quest)
                     };
 
                     return CommonHttpHelper.BuildSuccessResponse(result, HttpStatusCode.OK);
                 }
-                //если политика квеста публичная
-                if (quest.Policy.PolicyType == PolicyType.Public)
-                {
-                    //генерируем номер комнаты
-                    string roomKey = await GenerateNumberRoom();
-
-                    if(roomKey.IsNullOrEmpty()) {
-                        return CommonHttpHelper.BuildErrorResponse<StartQuestViewModel>(
-                        initialError: "Не удалось создать комнату прохождения");
-                    }
-
-                    //устанавливаем квест в кеш на время прохождения квеста
-                    await _cacheHelper.SetQuestAsync(quest);
-                    
-                    //регистрируем прохождение
-                    if(contract.RequestUserId.HasValue)
-                    {
-                        await _cacheHelper.RegisterProcessingAsync(
-                                roomKey, 
-                                contract.RequestUserId.Value, 
-                                quest.Id.ToString()
-                            );
-                    }
-                    else
-                    {
-                        return CommonHttpHelper.BuildErrorResponse<StartQuestViewModel>(
-                            initialError: "Нет пользователя в запросе", statusCode: HttpStatusCode.Unauthorized);
-                    }
-
-                    var result = new StartQuestViewModel()
-                    {
-                        Room = roomKey,
-                        Quest = _mapper.Map<QuestProcessViewModel>(quest)
-                    };
-
-                    return CommonHttpHelper.BuildSuccessResponse(result, HttpStatusCode.OK);
-                }
-                //если политика квеста закрытая - то надо позволить проходить
-                //только самому владельцу квеста
                 else
                 {
-                    return CommonHttpHelper.BuildErrorResponse<StartQuestViewModel>(
-                       initialError: "Такой тип квеста еще в разработке (можно только публичный)");
+                    return CommonHttpHelper.BuildErrorResponse<RegisterRoomViewModel>(
+                        initialError: "Нет пользователя в запросе", statusCode: HttpStatusCode.Unauthorized);
                 }
             }
             catch (Exception ex)
             {
-                return CommonHttpHelper.BuildErrorResponse<StartQuestViewModel>(
+                return CommonHttpHelper.BuildErrorResponse<RegisterRoomViewModel>(
                    HttpStatusCode.InternalServerError,
                    ex.ToExceptionDetails(),
-                   $"Ошибка выполнения метода {nameof(ConnectToQuestAsync)} ReqId : {contract.RequestId}");
+                   $"Ошибка выполнения метода {nameof(RegisterRoomAsync)} ReqId : {contract.RequestId}");
 
             }
         }
 
-        private async Task<string> GenerateNumberRoom()
+        private async Task<Guid?> GenerateNumberRoom()
         {
             int attempt = 0;
             while (attempt < 10)
             {
-                string value = _random.Next(int.MaxValue).ToString();
-
-                if (await _cacheHelper.IsSetRoomKeyAsync(value))
+                var value = Guid.NewGuid();
+                bool isDbExist = await _processQuestStorage.IsRoomExist(value);
+                bool isCacheExist = await _cacheStorage.IsRoomExist(value);
+                if (isCacheExist && isDbExist)
                 {
                     return value;
                 }

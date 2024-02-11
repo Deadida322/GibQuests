@@ -19,7 +19,7 @@ namespace ProcessQuestService.Main.Controllers
             clients = new List<WebSocket>();
         }
 
-        [HttpGet("/room/{room}")]
+        [HttpGet("/room2/{room}")]
         public async Task Get(string room)
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)

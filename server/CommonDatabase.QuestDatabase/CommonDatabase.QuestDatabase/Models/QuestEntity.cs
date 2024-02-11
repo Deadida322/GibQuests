@@ -1,4 +1,4 @@
-﻿using CommonDatabase.QuestDatabase.Models.Stages;
+﻿    using CommonDatabase.QuestDatabase.Models.Stages;
 
 namespace CommonDatabase.QuestDatabase.Models
 {

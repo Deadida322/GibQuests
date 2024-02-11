@@ -1,11 +1,18 @@
-﻿namespace ProcessQuestService.Core.HelperModels
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ProcessQuestDataContracts.ProcessModels
 {
     public class ProcessModel
     {
-        public ProcessModel() {
+        public ProcessModel()
+        {
             UserProcessing = new Dictionary<int, ProcessUserModel>();
         }
-        public string Key { get; set; }
+        public Guid Key { get; set; }
 
         public string QuestId { get; set; }
 

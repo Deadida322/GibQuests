@@ -4,7 +4,7 @@ using ProcessQuestDataContracts.Models.Stages;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ProcessQuestService.Core.Helpers
+namespace ProcessQuestService.ProcessQuestDatabase.Helpers
 {
     public class QuestJsonSerializer
     {
