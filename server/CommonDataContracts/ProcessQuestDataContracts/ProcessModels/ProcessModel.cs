@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProcessQuestDataContracts.ProcessModels
+﻿namespace ProcessQuestDataContracts.ProcessModels
 {
     public class ProcessModel
     {
@@ -14,7 +8,9 @@ namespace ProcessQuestDataContracts.ProcessModels
         }
         public Guid Key { get; set; }
 
-        public string QuestId { get; set; }
+        public int QuestId { get; set; }
+
+        public int? MaxDuration { get; set; }
 
         /// <summary>
         /// key - User Id

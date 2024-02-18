@@ -63,7 +63,7 @@ namespace ProcessQuestService.Core.BusinessLogic
                     {
                         return BuildWebSocketResponseHelper.BuildErrorResponse("Нет следующего этапа");
                     }
-                    return BuildWebSocketResponseHelper.BuildSucsessResponse(
+                    return BuildWebSocketResponseHelper.BuildSuccessResponse(
                         _mapper.Map<StageProcess>(nextStage));
                 }     
                 return BuildWebSocketResponseHelper.BuildErrorChoiseResponse();
@@ -101,7 +101,7 @@ namespace ProcessQuestService.Core.BusinessLogic
                     {
                         return BuildWebSocketResponseHelper.BuildErrorResponse("Нет следующего этапа");
                     }
-                    return BuildWebSocketResponseHelper.BuildSucsessResponse(
+                    return BuildWebSocketResponseHelper.BuildSuccessResponse(
                         _mapper.Map<StageProcess>(nextStage));
                 }
                 return BuildWebSocketResponseHelper.BuildErrorChoiseResponse();

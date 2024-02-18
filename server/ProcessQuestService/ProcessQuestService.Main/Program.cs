@@ -6,12 +6,16 @@ using System.Text.Json;
 using ProcessQuestService.Core.BusinessLogic;
 using ProcessQuestService.Core.Helpers;
 using ProcessQuestService.Core.HelperModels;
-using GenerateQuestsService.DataContracts.Models.Stages;
-using ProcessQuestDataContracts;
-using ProcessQuestDataContracts.Models.Stages;
 using ProcessQuestDataContracts.JsonHelpers;
 using AuthService.DataContracts.Interfaces;
-using ProcessQuestService.Main.Hubs;
+using ProcessQuestService.Core.Hubs;
+using ProcessQuestService.ProcessQuestDatabase.Interfaces;
+using ProcessQuestService.ProcessQuestDatabase.Implements;
+using ProcessQuestService.ProcessQuestDatabase;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,10 +27,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 //���������� Postgesql
-//builder.Services.AddDbContext<QuestContext>(options =>
-//    options
-//    .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-//);
+builder.Services.AddDbContext<ProcessQuestContext>(options =>
+    options
+    .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 //��������� ������������
 var redisSettings = builder.Configuration.GetSection(nameof(RedisSetting)).Get<RedisSetting>();
@@ -37,8 +41,55 @@ builder.Services.AddStackExchangeRedisCache(options => {
     //options.InstanceName = redisSettings.InstanceName;
 });
 
-
+//Configure
 builder.Services.Configure<RedisSetting>(builder.Configuration.GetSection(nameof(RedisSetting)));
+builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("Jwt"));
+
+//builder.Services.AddAuthorization();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateLifetime = false,
+        ValidateAudience = true,
+        ValidateIssuer = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+
+            // если запрос направлен хабу
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/process"))
+            {
+                // получаем токен из строки запроса
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
+});
+
+
+//add socket hubs
+
+builder.Services.AddSignalR();
 
 //������ � ������������� �� 
 
@@ -46,11 +97,15 @@ builder.Services.AddScoped<ConnectQuestLogic>();
 builder.Services.AddScoped<ProcessQuestLogic>();
 builder.Services.AddScoped<CheckQuestLogic>();
 builder.Services.AddScoped<ProcessQuestCacheHelper>();
-builder.Services.AddScoped<QuestJsonSerializer>();
+builder.Services.AddScoped<ProcessQuestService.Core.Helpers.QuestJsonSerializer>();
 
-//��������� ����������� � ������������� Json ����� ��� �������������� �������
-//��������� ����������� ����������� ��������������
-//� �������������� ������
+//
+builder.Services.AddScoped<ProcessQuestService.ProcessQuestDatabase.Helpers.QuestJsonSerializer>();
+builder.Services.AddScoped<IProcessQuestStorage, ProcessQuestStorage>();
+builder.Services.AddScoped<IProcessCacheStorage, ProcessCacheStorage>();
+builder.Services.AddScoped<ProcessIdentityManager>();
+                          
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.AllowInputFormatterExceptionMessages = true;
@@ -58,9 +113,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.SetProcessQuestJsonSerializerOptions();
 });
 
-//add socket hubs
-
-builder.Services.AddSignalR();
 
 //��������� Auto mapper
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<ProcessQuestMappingProfile>());
@@ -122,6 +174,9 @@ if (app.Environment.IsDevelopment() || 1 == 1)
 }
 
 app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 //app.UseHttpsRedirection();;
 

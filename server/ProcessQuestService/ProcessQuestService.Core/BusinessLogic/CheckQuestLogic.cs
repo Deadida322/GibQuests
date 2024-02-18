@@ -3,12 +3,6 @@ using AuthService.DataContracts.User;
 using AutoMapper;
 using ProcessQuestService.Core.HelperModels;
 using ProcessQuestService.Core.Helpers;
-using ProcessQuestService.Core.InteractionWebSocketModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProcessQuestService.Core.BusinessLogic
 {

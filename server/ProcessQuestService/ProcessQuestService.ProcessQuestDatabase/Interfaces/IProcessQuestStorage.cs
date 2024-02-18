@@ -1,5 +1,4 @@
-﻿using GenerateQuestsService.DataContracts.DataContracts;
-using ProcessQuestDataContracts.DataContracts;
+﻿using ProcessQuestDataContracts.DataContracts;
 
 namespace ProcessQuestService.ProcessQuestDatabase.Interfaces
 {

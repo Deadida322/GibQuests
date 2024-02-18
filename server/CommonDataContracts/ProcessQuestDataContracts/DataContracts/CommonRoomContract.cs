@@ -2,8 +2,8 @@
 
 namespace ProcessQuestDataContracts.DataContracts
 {
-    public class GetProcessQuestContract : CommonHttpRequest
+    public class CommonRoomContract : CommonHttpRequest
     {
-        public int Id { get; set; }
+        public Guid Key { get; set; }
     }
 }

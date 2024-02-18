@@ -13,7 +13,7 @@ namespace ProcessQuestService.Core.Helpers
         public static WebSocketResponse BuildErrorModelResponse()
         {
             return new WebSocketResponse {
-                Sucsess = false,
+                Success = false,
                 Error = "Ошибка модели запроса"
             };
         }
@@ -22,16 +22,16 @@ namespace ProcessQuestService.Core.Helpers
         {
             return new WebSocketResponse
             {
-                Sucsess = false,
+                Success = false,
                 Error = error
             };
         }
 
-        public static WebSocketResponse BuildSucsessResponse(StageProcess stage)
+        public static WebSocketResponse BuildSuccessResponse(StageProcess stage)
         {
             return new WebSocketResponse
             {
-                Sucsess = true,
+                Success = true,
                 Error = null,
                 Stage = stage
             };
@@ -41,7 +41,7 @@ namespace ProcessQuestService.Core.Helpers
         {
             return new WebSocketResponse
             {
-                Sucsess = true,
+                Success = true,
                 Error = error
             };
         }

@@ -1,12 +1,17 @@
-﻿using AutoMapper;
+﻿using AuthService.DataContracts.User;
+using AutoMapper;
 using GenerateQuestsService.DataContracts.DataContracts;
+using GenerateQuestsService.DataContracts.Enums;
 using GenerateQuestsService.DataContracts.Models;
 using GenerateQuestsService.DataContracts.Models.Stages;
 using ProcessQuestDataContracts.DataContracts;
+using ProcessQuestDataContracts.Enums;
 using ProcessQuestDataContracts.Models;
 using ProcessQuestDataContracts.Models.Stages;
+using ProcessQuestDataContracts.ProcessModels;
 using ProcessQuestDataContracts.ViewModels;
 using ProcessQuestService.Core.HelperModels;
+using ProcessQuestService.ProcessQuestDatabase.Models;
 
 namespace ProcessQuestService.Core.MappingProfiles
 {
@@ -52,9 +57,26 @@ namespace ProcessQuestService.Core.MappingProfiles
             CreateMap<QuestViewModel, QuestProcessViewModel>();
             CreateMap<QuestProcessViewModel, QuestViewModel>();
 
-            
-            CreateMap<RegisterProcessUserModel, StartQuestViewModel>();
-            CreateMap<StartQuestViewModel, RegisterProcessUserModel>();
+
+            //база данных
+            CreateMap<RegisterRoomContract, RoomEntity>();
+            CreateMap<RegisterRoomContract, ProcessQuestDataContracts.ProcessModels.ProcessModel>();
+
+            //теория
+            CreateMap<QuestViewModel, FullQuestViewModel>();
+            CreateMap<QuestProcessViewModel, FullQuestViewModel>();
+            CreateMap<FullQuestViewModel, QuestProcessViewModel>();
+            CreateMap<QuestPolicy, QuestPolicyProcess>();
+            CreateMap<PolicyType, PolicyProcessType>();
+            CreateMap<MemberType, MemberProcessType>();
+
+
+            //Auth
+            CreateMap<UserViewModel, UserDataViewModel>();
+            CreateMap<ShortUserViewModel, UserDataViewModel>();
+
+            CreateMap<RegisterProcessUserModel, ConnectToRoomViewModel>();
+            CreateMap<ConnectToRoomViewModel, RegisterProcessUserModel>();
         }
     }
 }

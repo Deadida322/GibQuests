@@ -13,6 +13,6 @@ namespace ProcessQuestDataContracts.DataContracts
 
         public int? MaxDuration {  get; set; }
 
-        public Guid? Key { get; set; }
+        public Guid Key { get; set; }
     }
 }

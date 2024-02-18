@@ -10,7 +10,9 @@ namespace ProcessQuestDataContracts.ProcessModels
     {
         public int Stage { get; set; }
 
-        public string Token { get; set; }
+        public string Token { get; set; }        
+
+        public UserDataViewModel UserData { get; set; }
 
     }
 }

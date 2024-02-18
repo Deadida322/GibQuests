@@ -1,23 +1,25 @@
 ﻿using CommonInfrastructure.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Refit;
 using ProcessQuestDataContracts.DataContracts;
 using ProcessQuestDataContracts.ViewModels;
+using Refit;
 
 namespace ProcessQuestDataContracts.Interfaces
 {
     public interface IProcessQuestApi
     {
-        [Post("/ProcesssQuest/ConnectToQuest")]
-        Task<CommonHttpResponse<StartQuestViewModel>> StartQuestAsync(
-        [Body] StartQuestContract contract);
+        //[Post("/ProcesssQuest/GetUserQuestsProcessing")]
+        //Task<CommonHttpResponse<IList<UserProcessingQuestViewModel>>> GetUserQuestsProcessingAsync(
+        //    [Body] CommonHttpRequest contract);
 
-        [Post("/ProcesssQuest/GetUserQuestsProcessing")]
-        Task<CommonHttpResponse<IList<UserProcessingQuestViewModel>>> GetUserQuestsProcessingAsync(
-            [Body] CommonHttpRequest contract);
+
+        [Post("/ProcesssQuest/RegisterRoom")]
+        Task<CommonHttpResponse<RegisterRoomViewModel>> RegisterRoomAsync([Body] RegisterRoomContract contract);
+
+        [Post("/ProcesssQuest/ConnectToRoom")]
+        Task<CommonHttpResponse<ConnectToRoomViewModel>> ConnectToRoomAsync([Body] CommonRoomContract contract);
+
+        [Post("/ProcesssQuest/StartRoom")]
+        Task<CommonHttpResponse> StartRoomAsync([Body] CommonRoomContract contract);
+
     }
 }

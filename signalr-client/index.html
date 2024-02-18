@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Metanit.com</title>
+    <title>Connect.net</title>
 </head>
 <body>
     <div id="inputForm">
@@ -12,24 +12,36 @@
     <div id="chatroom"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
     <script>
+    //     "key": "7f652cec-970d-4298-92eb-5ae726227dd4",
+    // "token": "ce0ad881-5a23-48e0-9605-d218f9122ebf",
+        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMSIsInJvb20iOiJkNjIxNGU5ZC1kMDAyLTRmOTUtYWFlOS1jZjU1MzU3NTY1YWEiLCJqdGkiOiJlZWEyY2FhZC00MDIyLTRhYmEtOTlhYi0wN2ZkNmZmYWZjYTIiLCJpc3MiOiJQcm9jZXNzUXVlc3RTZXJ2aWNlIiwiYXVkIjoiUHJvY2Vzc1F1ZXN0U2VydmljZSJ9.WDAHnRo3E6KjIxXrqCPc6blYROl4s1WPP-VwnByxyEI";
         const hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:44325/process")
+            // .withUrl("https://localhost:44325/process?room='d6214e9d-d002-4f95-aae9-cf55357565aa'", { accessTokenFactory: () => token })
+            // .withUrl("https://localhost:44325/process")
+            .withUrl("https://localhost:44325/process", { accessTokenFactory: () => token })
+            // .withAutomaticReconnect()
             .build();
+            // console.log(hubConnection);
+
+            // hubConnection.qs = { 
+            //     "key": "7f652cec-970d-4298-92eb-5ae726227dd4",
+            //     "token": "ce0ad881-5a23-48e0-9605-d218f9122ebf",
+            //  };
  
-        document.getElementById("sendBtn").addEventListener("click", function () {
-            let message = document.getElementById("message").value;
-            hubConnection.invoke("Send", message)
-                .catch(function (err) {
-                    return console.error(err.toString());
-                });
-        });
+        // document.getElementById("sendBtn").addEventListener("click", function () {
+        //     let message = document.getElementById("message").value;
+        //     hubConnection.invoke("Send", message)
+        //         .catch(function (err) {
+        //             return console.error(err.toString());
+        //         });
+        // });
  
-        hubConnection.on("Receive", function(message) {
+        // hubConnection.on("Receive", function(message) {
  
-            let messageElement = document.createElement("p");
-            messageElement.textContent = message;
-            document.getElementById("chatroom").appendChild(messageElement);
-        });
+        //     let messageElement = document.createElement("p");
+        //     messageElement.textContent = message;
+        //     document.getElementById("chatroom").appendChild(messageElement);
+        // });
  
         hubConnection.start()
             .then(function () {

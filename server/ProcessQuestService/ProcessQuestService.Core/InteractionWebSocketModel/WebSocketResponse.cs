@@ -8,7 +8,7 @@ namespace ProcessQuestService.Core.InteractionWebSocketModel
         /// Поле успешности, если false - 
         /// то внутренняя ошибка, не связанная с прохождением
         /// </summary>
-        public bool Sucsess { get; set; }
+        public bool Success { get; set; }
 
         /// <summary>
         /// В случае успеха возвращается новый этап

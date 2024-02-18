@@ -1,11 +1,11 @@
 ﻿namespace ProcessQuestDataContracts.ViewModels
 {
-    public class StartQuestViewModel
+    public class ConnectToRoomViewModel
     {
         /// <summary>
         /// Комната открывшегося прохождения
         /// </summary>
-        public string Room { get; set; }
+        public Guid Key { get; set; }
 
         /// <summary>
         /// Токен доступа к прохождению
