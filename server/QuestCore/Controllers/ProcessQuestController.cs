@@ -22,16 +22,16 @@ namespace QuestCore.Controllers
             _processQuestApi = processQuestApi;
         }
 
-        [HttpPost]
-        public async Task<CommonHttpResponse<StartQuestViewModel>> ConnectToQuest(StartQuestContract contract)
-        {
-            return await _processQuestApi.ConnectToQuestAsync(contract);
-        }
+        //[HttpPost]
+        //public async Task<CommonHttpResponse<StartQuestViewModel>> ConnectToQuest(StartQuestContract contract)
+        //{
+        //    return await _processQuestApi.ConnectToQuestAsync(contract);
+        //}
 
-        [HttpPost]
-        public async Task<CommonHttpResponse<IList<UserProcessingQuestViewModel>>> GetUserQuestsProcessing(CommonHttpRequest contract)
-        {
-            return await _processQuestApi.GetUserQuestsProcessingAsync(contract);
-        }
+        //[HttpPost]
+        //public async Task<CommonHttpResponse<IList<UserProcessingQuestViewModel>>> GetUserQuestsProcessing(CommonHttpRequest contract)
+        //{
+        //    return await _processQuestApi.GetUserQuestsProcessingAsync(contract);
+        //}
     }
 }
