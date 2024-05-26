@@ -1,34 +1,45 @@
-# Global configuration settings for Prometheus
+# my global config
 global:
-  # Set the interval at which Prometheus scrapes targets (15 seconds)
-  scrape_interval: 15s
-  # Set the timeout for individual scrape requests (10 seconds)
-  scrape_timeout: 10s
-  # Set the interval at which rules are evaluated (15 seconds)
-  evaluation_interval: 15s
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
 
-# Alerting configuration for Prometheus
+# Alertmanager configuration
 alerting:
   alertmanagers:
-    # Configure Alertmanager with HTTP settings
-  - follow_redirects: true
-    enable_http2: true
-    scheme: http
-    timeout: 10s
-    api_version: v2
-    # Configure static targets for Alertmanager
-    static_configs:
-    - targets: []
+  - static_configs:
+    - targets:
+      # - alertmanager:9093
 
-# Scrape configurations for Prometheus, defining jobs and their settings
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
 scrape_configs:
-  # Job configuration for 'fastapi'
-  - job_name: 'questqore'
-    # Set the interval at which Prometheus scrapes targets for this job (10 seconds)
-    scrape_interval: 10s
-    # Set the metrics path for this job
-    metrics_path: /metrics
-    # Define static targets for this job
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
     static_configs:
-      - targets: ['host.docker.internal:9004']
-      # - targets: ['http://auth-service']
+    - targets: ['prometheus:9090']
+    
+  #- job_name: 'docker'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    #static_configs:
+    #- targets: ['10.0.75.1:9323'] 
+
+  - job_name: 'node-exporter'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+
+    static_configs:
+    - targets: ['node-exporter:9100']    

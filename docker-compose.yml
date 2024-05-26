@@ -68,35 +68,64 @@ services:
     prometheus:
         # Use the official Prometheus image
         image: prom/prometheus
+        container_name: prometheus
         # Expose ports for Prometheus
         ports:
-        - "9090:9090"
+            - "9090:9090"
         # Mount the local Prometheus configuration file
         volumes:
-        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - prometheus_data:/prometheus
         # Command to start Prometheus with the specified configuration file
         command:
-        - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--storage.tsdb.path=/prometheus'
+            - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+            - '--web.console.templates=/usr/share/prometheus/consoles'
         
     # Service for Grafana
     grafana:
         container_name: grafana
         # Use the official Grafana image
         image: grafana/grafana
+        depends_on:
+            - prometheus
         # Set environment variables for Grafana
         environment:
-        - GF_SECURITY_ADMIN_PASSWORD=admin
-        - GF_SECURITY_ADMIN_USER=admin
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+            - GF_SECURITY_ADMIN_USER=admin
+        restart: unless-stopped
         # Expose ports for Grafana
         ports:
-        - "3000:3000"
+            - "3000:3000"
         # Mount a volume for persistent data storage
+        volumes:
+            - grafana_storage:/var/lib/grafana
+            - ./grafana/provisioning/:/etc/grafana/provisioning/
+        env_file:
+            - ./grafana/config.monitoring
+    
+    node-exporter:
+        image: prom/node-exporter
+        container_name: node-exporter
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+        command: 
+            - '--path.procfs=/host/proc' 
+            - '--path.sysfs=/host/sys'
+            - --collector.filesystem.ignored-mount-points
+            - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+        ports:
+            - 9100:9100
+        restart: always
 
 
 volumes:
     postgresdb:
     cache:
-    grafana_data:
+    prometheus_data: {}
+    grafana_storage: {}
 
 networks:
   default:
