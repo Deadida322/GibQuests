@@ -65,6 +65,38 @@ services:
         depends_on:
             - postgresdb
 
+    prometheus:
+        # Use the official Prometheus image
+        image: prom/prometheus
+        # Expose ports for Prometheus
+        ports:
+        - "9090:9090"
+        # Mount the local Prometheus configuration file
+        volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+        # Command to start Prometheus with the specified configuration file
+        command:
+        - '--config.file=/etc/prometheus/prometheus.yml'
+        
+    # Service for Grafana
+    grafana:
+        container_name: grafana
+        # Use the official Grafana image
+        image: grafana/grafana
+        # Set environment variables for Grafana
+        environment:
+        - GF_SECURITY_ADMIN_PASSWORD=admin
+        - GF_SECURITY_ADMIN_USER=admin
+        # Expose ports for Grafana
+        ports:
+        - "3000:3000"
+        # Mount a volume for persistent data storage
+
+
 volumes:
     postgresdb:
     cache:
+    grafana_data:
+
+networks:
+  default:
