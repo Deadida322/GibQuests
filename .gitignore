@@ -7,6 +7,9 @@
 postgres-data
 redis-data
 
+#python classifiler data
+classifiller-data
+
 #vscode
 .vscode
 #package config
