@@ -1,6 +1,16 @@
 from nltk.probability import FreqDist
+from nltk import word_tokenize
 import pymorphy2
 morph = pymorphy2.MorphAnalyzer()
+
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+from nltk.corpus import stopwords
+
+stop_words_ru = list(set(stopwords.words('russian')))
+my_stop_words = list(['ооо', 'ooo', 'кася', '.', ',', '\'', '(', ')', '-', '«', '»', '?', '!', ':', ';', '—'])
+stop_words = stop_words_ru + my_stop_words
 
 #удаляем информацию об авторе и конце
 def preprocess_train_text(text, author):
@@ -18,14 +28,15 @@ def check_most_common_words(lemmedTokens, len_dist = 50):
     print(freqDist.most_common(len_dist))
 
 #лемматизируем и удаляем стоп-слова
-def lemmed_and_clear_stop_words(words):
+def lemmed_and_clear_stop_words(text):
+    words = word_tokenize(text)
     lemmedTokens = []
     for token in words:
         normal_word = morph.parse(token)[0].normal_form
-        lemmedTokens.append(normal_word)
+        # lemmedTokens.append(normal_word)
         # удаляем стоп слова
-        # if normal_word not in stop_words:
-        #     lemmedTokens.append(normal_word)
+        if normal_word not in stop_words and not normal_word.isnumeric():
+            lemmedTokens.append(normal_word)
     #дополнительно фильтруем 50 первых слов
     return lemmedTokens
 
@@ -34,4 +45,4 @@ def clear_short_words(words, min_length = 2, min_freq = 3):
     freq_dist = FreqDist(words)
     res =[word for word, freq in freq_dist.items() if len(word) > min_length and freq > min_freq]
     print(res)
-    return  res
+    return res

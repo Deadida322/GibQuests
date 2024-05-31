@@ -9,6 +9,8 @@ redis-data
 
 #python classifiler data
 classifiller-data
+process-data
+process-data-3-freq
 
 #vscode
 .vscode

@@ -9,7 +9,7 @@ from vectorizers import tfidf_vectorizer, countVectorizer
 
 start_time = time.time()
 
-textsWithCategory = get_texts_2(100)
+textsWithCategory = get_texts(3000)
 print('Получили тексты')
 texts = [text for text, category in textsWithCategory]
 labels = [category for text, category in textsWithCategory]
