@@ -33,7 +33,6 @@ def lemmed_and_clear_stop_words(text):
     lemmedTokens = []
     for token in words:
         normal_word = morph.parse(token)[0].normal_form
-        # lemmedTokens.append(normal_word)
         # удаляем стоп слова
         if normal_word not in stop_words and not normal_word.isnumeric():
             lemmedTokens.append(normal_word)

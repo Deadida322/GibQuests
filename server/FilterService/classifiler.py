@@ -9,11 +9,11 @@ from vectorizers import tfidf_vectorizer, countVectorizer
 
 start_time = time.time()
 
-textsWithCategory = get_texts(3000)
+textsWithCategory = get_texts()
 print('Получили тексты')
 texts = [text for text, category in textsWithCategory]
 labels = [category for text, category in textsWithCategory]
-X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.1, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.05, random_state=42)
 
 X_train_vectorized = countVectorizer.fit_transform(X_train)
 X_test_vectorized = countVectorizer.transform(X_test)
@@ -21,15 +21,7 @@ X_test_vectorized = countVectorizer.transform(X_test)
 # Обучение классификатора
 classifier = MultinomialNB()
 classifier.fit(X_train_vectorized, y_train)
-# with open('model.pkl','wb') as f:
-#     pickle.dump(classifier, f)
-    # print('dump')
 
-# print("--- %s seconds ---" % (time.time() - start_time))
-
-# with open('model.pkl', 'rb') as f:
-#     classifier = pickle.load(f)
-# # Предсказание
 predict = classifier.predict(X_test_vectorized)
 
 # точность
