@@ -11,6 +11,8 @@ redis-data
 classifiller-data
 process-data
 process-data-3-freq
+*.keras
+*.weights.h5
 
 #vscode
 .vscode

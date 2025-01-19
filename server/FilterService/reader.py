@@ -7,6 +7,7 @@ from preprocessing import preprocess_train_text, lemmed_and_clear_stop_words, cl
 
 load_dotenv()
 directory = os.getenv('DARA_DIR')
+base_dir= os.getenv('BASE_DIR')
 export_dir = 'process-data-1'
 def get_texts():
     data = pd.read_csv(os.path.join(str(directory), 'description.csv'), delimiter=';',
@@ -17,14 +18,17 @@ def get_texts():
     for row in data[['file', 'rating']].itertuples():
         file_path = os.path.join(str(directory), 'previews', row.file)
         if (os.path.isfile(file_path)):
-            fileObj = codecs.open(file_path, "r", "utf-8")
+            # fileObj = codecs.open(file_path, "r", "utf-8")
+            fileObj = codecs.open(file_path, "r", "cp1251")
             text = fileObj.read()
             rating = row.rating
+            if (rating == 5 or rating == 3 or rating == 8):
+                rating = 6
+            if(rating == 11 or rating == 12):
+                rating = 12
             previews.append((text, rating))
             fileObj.close()
     return previews
-
-
 
 def get_texts_2(text_len = 3000):
     data = pd.read_csv(os.path.join(str(directory), 'description.csv'), delimiter=';',
@@ -45,7 +49,6 @@ def get_texts_2(text_len = 3000):
         previews.append((''.join(not_short_words), rating))
         fileObj.close()
     return previews
-
 
 def write_file():
     data = pd.read_csv(os.path.join(str(directory), 'description.csv'), delimiter=';',
@@ -68,3 +71,43 @@ def write_file():
                 file.write(text_to_write)
             file_obj.close()
             print(row.file, 'write')
+
+def get_texts_3(skip = 0, take = 0):
+    data = pd.read_csv(os.path.join(str(directory), 'description.csv'), delimiter=';',
+                names=['file', 'name', 'author', 'rating', 'description'])
+
+    previews = []
+    for row in data[['file', 'rating']].iloc[skip:take].itertuples():
+        file_path = os.path.join(str(directory), 'previews', row.file)
+        if (os.path.isfile(file_path)):
+            fileObj = codecs.open(file_path, "r", "cp1251")
+            text = fileObj.read()
+            rating = row.rating
+            previews.append((text, rating))
+            fileObj.close()
+    return previews
+
+def write_model_params(take):
+    file_path = os.path.join(base_dir, 'model_config.txt')
+    with open(file_path, 'w') as file:
+        text_to_write = str(take)
+        file.write(text_to_write)
+
+def read_model_params():
+    file_path = os.path.join(base_dir, 'model_config.txt')
+    if (not os.path.isfile(file_path)):
+        return 0
+    else:
+        file_obj = codecs.open(file_path, "r", "utf_8_sig")
+        text = file_obj.read()
+        file_obj.close()
+        return int(text)
+
+
+# def get_all_ratings():
+#     data = pd.read_csv(os.path.join(str(directory), 'description.csv'), delimiter=';',
+#                        names=['file', 'name', 'author', 'rating', 'description'])
+#
+#     print(data['rating'].unique())
+#
+# get_all_ratings()

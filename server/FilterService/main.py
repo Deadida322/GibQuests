@@ -4,7 +4,7 @@ import pickle
 from sklearn.model_selection import train_test_split
 from reader import get_texts
 from vectorizers import countVectorizer
-
+from netural import get_rating
 app = Flask(__name__)
 
 @app.route('/')

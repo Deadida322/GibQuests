@@ -11,5 +11,5 @@ stop_words_ru = list(set(stopwords.words('russian')))
 my_stop_words = list(['ооо', 'кася', '.', ',', '\'', '(', ')', '-', '«', '»', '?', '!', ':', ';', '—'])
 stop_words = stop_words_ru + my_stop_words
 
-countVectorizer = CountVectorizer(ngram_range=(2, 2))
-tfidf_vectorizer = TfidfVectorizer(ngram_range=(2, 2))
+countVectorizer = CountVectorizer(ngram_range=(1, 1))
+tfidf_vectorizer = TfidfVectorizer(ngram_range=(1, 1))
