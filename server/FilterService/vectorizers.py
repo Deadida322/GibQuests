@@ -4,8 +4,8 @@ import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 
-import pymorphy2
-morph = pymorphy2.MorphAnalyzer()
+import pymorphy3
+morph = pymorphy3.MorphAnalyzer()
 
 stop_words_ru = list(set(stopwords.words('russian')))
 my_stop_words = list(['ооо', 'кася', '.', ',', '\'', '(', ')', '-', '«', '»', '?', '!', ':', ';', '—'])

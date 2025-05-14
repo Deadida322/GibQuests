@@ -1,25 +1,30 @@
 from nltk.probability import FreqDist
 from nltk import word_tokenize
-import pymorphy2
-morph = pymorphy2.MorphAnalyzer()
+import pymorphy3
+morph = pymorphy3.MorphAnalyzer()
 
 import nltk
 nltk.download('stopwords')
 nltk.download('punkt')
+nltk.download('punkt_tab')
 from nltk.corpus import stopwords
 
 stop_words_ru = list(set(stopwords.words('russian')))
-my_stop_words = list(['ооо', 'ooo', 'кася', '.', ',', '\'', '(', ')', '-', '«', '»', '?', '!', ':', ';', '—'])
+my_stop_words = list(['ооо', '.', ',', '\'', '(', ')', '-', '«', '»', '?', '!', ':', ';', '—', '–', ']', '[', '...'])
 stop_words = stop_words_ru + my_stop_words
 
 #удаляем информацию об авторе и конце
-def preprocess_train_text(text, author):
+def preprocess_train_text(text, author, name):
     # отсекаем последнюю часть
     text = text.split('Конец ознакомительного фрагмента')[0]
 
     # убираем первую часть с автором и возвращаем чисто текст в виде массива
-    author_splitted = [(t, len(t)) for t in text.split(author)]
-    text = sorted(author_splitted, key=lambda chunck: chunck[1], reverse=True)[0][0]
+    # author_splitted = [(t, len(t)) for t in text.split(author)]
+    # text = sorted(author_splitted, key=lambda chunck: chunck[1], reverse=True)[0][0]
+
+    name_splitted = [(t, len(t)) for t in text.split(name)]
+    text = sorted(name_splitted, key=lambda chunck: chunck[1], reverse=True)[0][0]
+    #убираем на всякий случай первые 200 слов
     return text
 
 # анализ частоты слов

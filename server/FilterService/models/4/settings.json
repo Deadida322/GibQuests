@@ -1,0 +1,11 @@
+{
+    "name": "count-4",
+    "vectorizer": "count",
+    "ngrams": 1,
+    "vocab_size": 200000,
+    "encoder": "oneHot",
+    "epochs": 5,
+    "batch_size": 128,
+    "description": "Описание: оптимальная модель с векторайзером подсчета",
+    "accuracy": "86.0%"
+}

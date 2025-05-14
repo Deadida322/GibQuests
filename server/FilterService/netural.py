@@ -1,130 +1,188 @@
+import os
 import numpy as np
 import pandas as pd
-import random as rn
-import math
-
 from sklearn.model_selection import train_test_split
-from keras_preprocessing.text import Tokenizer
-from keras_preprocessing.sequence import pad_sequences
-import tensorflow.keras.layers as L
-from sklearn.preprocessing import LabelEncoder
-from tensorflow.keras.losses import SparseCategoricalCrossentropy
+from sklearn.preprocessing import OneHotEncoder
 import tensorflow as tf
+from keras import layers as L, Sequential
+import json
 
-from reader import get_texts, get_texts_3, write_model_params, read_model_params
+from utils import make_dataset, models_dir
+
+os.environ["KERAS_BACKEND"] = "tensorflow"
+import keras
+
+from reader import get_texts, get_texts_with_toxic
 import time
-import os
+from stats import get_vocab, get_text_stats
+from joblib import dump
+
+#model parameters
+name="count-9"
+vectorizer="count"
+description = "Описание: модель с токсичными комментариями"
+encoderName = "oneHot"
+
 
 # hyper parameters
-EPOCHS = 5
-BATCH_SIZE = 256
+base_dir = os.getenv('BASE_DIR')
+test_split = 0.15
+batch_size = 128
+auto = tf.data.AUTOTUNE
+epochs = 5
+vocab_size = 200000
+ngrams = 1
 embedding_dim = 16
 
-def create_model(vocab_size = 20000):
-    model = tf.keras.Sequential([
-        L.Embedding(vocab_size, embedding_dim),
-        L.Bidirectional(L.LSTM(64, return_sequences=True)),
-        L.Conv1D(64, 8),
-        L.MaxPool1D(),
-        L.Bidirectional(L.LSTM(64, return_sequences=True)),
-        L.Conv1D(64, 6),
-        L.MaxPool1D(),
-        L.Bidirectional(L.LSTM(64, return_sequences=True)),
-        L.Conv1D(64, 3),
-        L.MaxPool1D(),
-        # L.LSTM(64,return_sequences=True),
-        # L.Conv1D(64,2),
-        # L.GlobalMaxPooling1D(),
-        L.Flatten(),
-        L.Dropout(0.5),
-        L.Dense(128, activation="relu"),
-        L.Dropout(0.5),
-        L.Dense(64, activation="relu"),
-        L.Dropout(0.5),
-        L.Dense(4, activation="softmax")
+maxlen = 180
+# max_words = 5000
+filter_length = 300
+
+text_vectorizer = L.TextVectorization(
+    max_tokens=vocab_size, ngrams=ngrams, output_mode=vectorizer
+)
+
+def make_model(vocab_Label_size = 4):
+    model = Sequential([
+        L.Dense(512, activation="relu"),
+        L.Dense(256, activation="relu"),
+        L.Dense(vocab_Label_size, activation="sigmoid"),
     ])
+    model.compile(
+        loss="binary_crossentropy", optimizer="adam", metrics=["binary_accuracy"]
+    )
 
-    model.compile(loss=SparseCategoricalCrossentropy(),
-                  optimizer='adam', metrics=['accuracy']
-                  )
-    return model
+    # model = Sequential([
+    #     L.Embedding(vocab_size, 20, input_length=maxlen),
+    #     L.Dropout(0.1),
+    #     L.Conv1D(filter_length, 3, padding='valid', activation='relu', strides=1),
+    #     L.GlobalMaxPool1D(),
+    #     L.Dense(vocab_Label_size, activation="sigmoid"),
+    # ])
+    #
+    # model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['categorical_accuracy'])
 
-def train():
-    # take_step = 20
-    # skip = read_model_params()
-    # write_model_params(20)
-
-    # textsWithCategory = get_texts_3(0, 20)
-    textsWithCategory = get_texts()
-    start_time = time.time()
-    # textsWithCategory = get_texts()
-    print('Получили тексты')
-
-
-    texts = [text for text, category in textsWithCategory]
-    labels = [category for text, category in textsWithCategory]
-    # кодируем метки
-    encoder = LabelEncoder()
-    encoder.fit(labels)
-    encoded_y = encoder.transform(labels)
-    # categorical_labels = to_categorical(encoded_y, num_classes=4)
-
-    X_train, X_test, y_train, y_test = train_test_split(texts, encoded_y, test_size=0.05, random_state=42)
-
-    vocab_size = 20000
-
-    tokenizer = Tokenizer(lower=False, num_words=vocab_size)
-    tokenizer.fit_on_texts(X_train)
-
-    X_train_enc = tokenizer.texts_to_sequences(X_train)
-    X_test_enc = tokenizer.texts_to_sequences(X_test)
-
-    vocab_size = len(tokenizer.word_index)+1
-    #exp_sen = 1
-
-    print("Vocabulary size: {}".format(vocab_size))
-
-    max_len = 10000
-    X_train_pd = pad_sequences(X_train_enc, padding='post', maxlen=max_len)
-    X_test_pd = pad_sequences(X_test_enc, padding='post', maxlen=max_len)
-
-    seed_value = 1337
-    np.random.seed(seed_value)
-    tf.random.set_seed(seed_value)
-    rn.seed(seed_value)
-
-
-    model = create_model(vocab_size)
-    #display model
+    #
     # model.summary()
 
-    checkpoint_path = "training_1/cp-{epoch:04d}.weights.h5"
-    checkpoint_dir = os.path.dirname(checkpoint_path)
+    return model
 
-    # Calculate the number of batches per epoch
+class ModelEndtoEnd(keras.Model):
+    def predict(self, inputs):
+        indices = text_vectorizer(inputs)
+        return super().predict(indices)
 
-    n_batches = len(X_train) / BATCH_SIZE
-    n_batches = math.ceil(n_batches)  # round up the number of batches to the nearest whole integer
 
-    # Create a callback that saves the model's weights every 5 epochs
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(
-        filepath=checkpoint_path,
-        verbose=1,
-        save_weights_only=True,
-        save_freq=5)
-    print(n_batches)
+def get_inference_model(model):
+    inputs = model.inputs
+    outputs = model.outputs
+    end_to_end_model = ModelEndtoEnd(inputs, outputs, name="end_to_end_model")
+    end_to_end_model.compile(
+        optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]
+    )
+    return end_to_end_model
 
-    history = model.fit(X_train_pd, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE, callbacks=[cp_callback],
-                        validation_data=(X_test_pd, y_test))
-    model.save('model.   k eras')
+def save_model_params(encoder, model, accuracy):
+    subfolders = [f.path for f in os.scandir(models_dir) if f.is_dir()]
+    folder_index = len(subfolders) + 1
+    folder_path = os.path.join(str(models_dir), str(folder_index))
+    os.mkdir(folder_path)
+    settings_file_path = os.path.join(str(folder_path), "settings.json")
+    model_file_path = os.path.join(str(folder_path), "model.keras")
+    encoder_file_path = os.path.join(str(folder_path), "encoder.joblib")
 
-    loaded_model = tf.keras.models.load_model("model.keras")
-    loaded_model.summary()
+    settings = {
+        "name": name,
+        "vectorizer": vectorizer,
+        "ngrams": ngrams,
+        "vocab_size": vocab_size,
+        "encoder": encoderName,
+        "epochs": epochs,
+        "batch_size" : batch_size,
+        "description": description,
+        "accuracy": accuracy
+    }
+
+    with open(settings_file_path, 'w', encoding='utf-8') as f:
+        json.dump(settings, f, ensure_ascii=False, indent=4)
+
+    model.save(model_file_path)
+    dump(encoder, encoder_file_path)
+
+    print("save keras model")
+
+def train():
+    textsWithCategory = get_texts_with_toxic()
+    # конверт в датафрейм
+    texts_pd = pd.DataFrame(textsWithCategory, columns=["text", "rating"])
+    start_time = time.time()
+    print('Получили тексты')
+
+    # получение размера словаря всех слов
+    # local_vocab_size = get_vocab(texts_pd)
+    # if(local_vocab_size > 200000):
+    #     vocab_size = 200000
+    print("vocab_size: ", vocab_size)
+
+    # кодируем метки
+    # делаем форму [[6], [12], [16], [18], ... ]
+    arr_labels = np.array(texts_pd["rating"]).reshape(-1, 1)
+
+    # кол-во меток классов
+    vocab_size_label = len(np.unique(arr_labels))
+
+    encoder = OneHotEncoder(sparse_output=False, dtype=np.integer)
+    encoder.fit(arr_labels)
+
+    # получение статистики по текстам
+    # get_text_stats(texts_pd)
+    # получение статистики по распределению классов
+    # print_classes(texts_pd)
+
+    train_df, test_df = train_test_split(
+        texts_pd,
+        test_size=test_split,
+        random_state=42
+    )
+
+    val_df = test_df.sample(frac=0.5)
+    test_df.drop(val_df.index, inplace=True)
+
+    train_dataset = make_dataset(train_df, encoder, batch_size, is_train=True)
+    validation_dataset = make_dataset(val_df, encoder, batch_size, is_train=False)
+    test_dataset = make_dataset(test_df, encoder, batch_size, is_train=False)
+
+    # `TextVectorization` layer needs to be adapted as per the vocabulary from our
+    # training set.
+    with tf.device("/CPU:0"):
+        text_vectorizer.adapt(train_dataset.map(lambda text, label: text))
+
+    print("начали")
+    train_dataset = train_dataset.map(
+        lambda text, label: (text_vectorizer(text), label), num_parallel_calls=auto
+    ).prefetch(auto)
+    validation_dataset = validation_dataset.map(
+        lambda text, label: (text_vectorizer(text), label), num_parallel_calls=auto
+    ).prefetch(auto)
+    test_dataset = test_dataset.map(
+        lambda text, label: (text_vectorizer(text), label), num_parallel_calls=auto
+    ).prefetch(auto)
+
+
+    shallow_mlp_model = make_model(vocab_size_label)
+
+    history = shallow_mlp_model.fit(
+        train_dataset, validation_data=validation_dataset, epochs=epochs
+    )
+
+    _, binary_acc = shallow_mlp_model.evaluate(test_dataset)
+    acc = f"{round(binary_acc * 100, 2)}%"
+    print(f"Categorical accuracy on the test set: {acc}.")
     print("--- %s seconds ---" % (time.time() - start_time))
 
-def get_rating(text):
-    loaded_model = tf.keras.models.load_model("model-3.keras")
+    model_for_inference = get_inference_model(shallow_mlp_model)
+    # save keras inference
+    save_model_params(encoder, model_for_inference, acc)
+    model_for_inference.summary()
 
-
-# get_rating('Текста тваввима')
 train()

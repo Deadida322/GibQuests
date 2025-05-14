@@ -564,3 +564,9 @@ fabric.properties
 
 # idea folder, uncomment if you don't need it
 .idea
+
+#filter service
+data-text
+news
+process-data-non-freq
+toxic

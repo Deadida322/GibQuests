@@ -1,0 +1,11 @@
+{
+    "name": "tf_idf-5",
+    "vectorizer": "tf_idf",
+    "ngrams": 2,
+    "vocab_size": 200000,
+    "encoder": "oneHot",
+    "epochs": 5,
+    "batch_size": 128,
+    "description": "Описание: модель с векторайзером tf_idf",
+    "accuracy": "80.4%"
+}

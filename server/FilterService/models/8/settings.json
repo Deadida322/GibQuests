@@ -1,0 +1,11 @@
+{
+    "name": "count-8",
+    "vectorizer": "count",
+    "ngrams": 1,
+    "vocab_size": 200000,
+    "encoder": "oneHot",
+    "epochs": 5,
+    "batch_size": 128,
+    "description": "Описание: модель с новостями",
+    "accuracy": "99.77%"
+}

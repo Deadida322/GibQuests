@@ -1,0 +1,11 @@
+{
+  "name": "tf-idf-1",
+  "vectorizer": "tf_idf",
+  "ngrams": 2,
+  "encoder": "oneHot",
+  "vocab_size": 200000,
+  "epochs": 5,
+  "batch_size": 128,
+  "description": "Первый векторайзер и тест",
+  "accuracy": "81.36%"
+}
